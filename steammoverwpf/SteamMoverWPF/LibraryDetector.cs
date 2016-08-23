@@ -58,6 +58,11 @@ namespace SteamMoverWPF
                 {
                     continue;
                 }
+                //TODO: Temporary workarround for not existing library folders. In the future add possibility to manage library folders list directly in the tool.
+                if (!Directory.Exists(vfi.value + "\\SteamApps"))
+                {
+                    continue;
+                }
                 library = new Library();
                 library.LibraryDirectory = vfi.value + "\\SteamApps";
                 libraryList.Add(library);
