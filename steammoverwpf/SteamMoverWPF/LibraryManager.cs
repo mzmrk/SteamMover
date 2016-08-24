@@ -1,10 +1,4 @@
 ﻿using SteamMoverWPF.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SteamMoverWPF
 {
@@ -34,7 +28,7 @@ namespace SteamMoverWPF
         {
             string sourceFile = source.LibraryDirectory + "\\" + "appmanifest_" + appID + ".acf";
             string destinationFile = destination.LibraryDirectory + "\\" + "appmanifest_" + appID+ ".acf";
-            System.IO.File.Move(sourceFile, destinationFile);
+            moveFolder(sourceFile, destinationFile);
         }
     }
 }

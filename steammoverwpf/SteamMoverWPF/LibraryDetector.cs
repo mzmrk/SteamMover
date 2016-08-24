@@ -3,12 +3,8 @@ using SteamMoverWPF.Entities;
 using SteamMoverWPF.Util;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SteamMoverWPF
 {
@@ -40,9 +36,9 @@ namespace SteamMoverWPF
                 return "";
             }
         }
-        List<Library> detectSteamLibraries(string steamPath, List<Library> libraryList)
+        List<Library> detectSteamLibraries(string steamPath)
         {
-            libraryList.Clear();
+            List<Library> libraryList = new List<Library>();
             ValveFileReader vfr = new ValveFileReader();
             vfr.readFile(steamPath + "\\steamapps\\libraryfolders.vdf");
             if (vfr.name != "LibraryFolders")
@@ -129,13 +125,12 @@ namespace SteamMoverWPF
         }
         public void run()
         {
-            libraryList = new List<Library>();
             steamPath = detectSteamPath();
             if (steamPath == null || steamPath == "")
             {
                 System.Environment.Exit(1);
             }
-            libraryList = detectSteamLibraries(steamPath, libraryList);
+            libraryList = detectSteamLibraries(steamPath);
             foreach (Library library in libraryList)
             {
                 detectSteamGames(library);
@@ -143,7 +138,6 @@ namespace SteamMoverWPF
         }
         public void detectRealSizeOnDisk(Library library, Game game)
         {
-
             game.RealSizeOnDisk = GetWSHFolderSize(library.LibraryDirectory + "\\common\\" + game.GameDirectory);
 
         }
