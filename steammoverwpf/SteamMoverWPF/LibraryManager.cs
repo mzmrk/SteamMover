@@ -24,11 +24,11 @@ namespace SteamMoverWPF
             return moveFolder(src, dst);
         }
 
-        public void moveACF(Library source, Library destination, int appID)
+        public bool moveACF(Library source, Library destination, int appID)
         {
             string sourceFile = source.LibraryDirectory + "\\" + "appmanifest_" + appID + ".acf";
             string destinationFile = destination.LibraryDirectory + "\\" + "appmanifest_" + appID+ ".acf";
-            moveFolder(sourceFile, destinationFile);
+            return moveFolder(sourceFile, destinationFile);
         }
     }
 }

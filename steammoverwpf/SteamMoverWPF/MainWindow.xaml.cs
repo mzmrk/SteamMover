@@ -88,8 +88,16 @@ namespace SteamMoverWPF
             string gameFolder = ((Game)dataGridLeft.SelectedItem).GameDirectory;
             int appID = ((Game)dataGridLeft.SelectedItem).AppID;
 
-            libraryManager.moveGame(source, destination, gameFolder);
-            libraryManager.moveACF(source, destination, appID);
+            if (!libraryManager.moveGame(source, destination, gameFolder))
+            {
+                //TODO: Reverse move game folder operation? do some cleanup?
+                return;
+            }
+            if (!libraryManager.moveACF(source, destination, appID))
+            {
+                //TODO: Reverse move game folder operation? do some cleanup?
+                return;
+            }
 
             destination.GamesList.Add((Game)dataGridLeft.SelectedItem);
             source.GamesList.Remove((Game)dataGridLeft.SelectedItem);
@@ -102,9 +110,17 @@ namespace SteamMoverWPF
             string gameFolder = ((Game)dataGridRight.SelectedItem).GameDirectory;
             int appID = ((Game)dataGridRight.SelectedItem).AppID;
 
-            libraryManager.moveGame(source, destination, gameFolder);
-            libraryManager.moveACF(source, destination, appID);
-
+            if (!libraryManager.moveGame(source, destination, gameFolder))
+            {
+                //TODO: Reverse move game folder operation? do some cleanup?
+                return;
+            }
+            if (!libraryManager.moveACF(source, destination, appID))
+            {
+                //TODO: Reverse move game folder operation? do some cleanup?
+                return;
+            }
+            
             destination.GamesList.Add((Game)dataGridRight.SelectedItem);
             source.GamesList.Remove((Game)dataGridRight.SelectedItem);
         }
