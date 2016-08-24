@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace SteamMoverWPF
 {
-    class MainWindowViewModel : INotifyPropertyChanged
+    class BindingDataContext : INotifyPropertyChanged
     {
         private SortableBindingList<Game> gamesLeft;
         public SortableBindingList<Game> GamesLeft

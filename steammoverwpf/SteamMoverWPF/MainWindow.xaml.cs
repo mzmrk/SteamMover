@@ -14,7 +14,7 @@ namespace SteamMoverWPF
         volatile LibraryDetector libraryDetector = new LibraryDetector();
         LibraryManager libraryManager = new LibraryManager();
         //Thread threadRealSizeOnDisk;
-        MainWindowViewModel mainWindowViewModel;
+        BindingDataContext bindingDataContext;
 
         public void init()
         {
@@ -28,9 +28,9 @@ namespace SteamMoverWPF
                 PropertyDescriptor property = properties.Find ( "GameName", false );
                 library.GamesList.SortMyList(property, ListSortDirection.Ascending);
             }
-            mainWindowViewModel = new MainWindowViewModel();
-            mainWindowViewModel.Libraries = new BindingList<Library>(libraryDetector.libraryList);
-            this.DataContext = mainWindowViewModel;
+            bindingDataContext = new BindingDataContext();
+            bindingDataContext.Libraries = new BindingList<Library>(libraryDetector.libraryList);
+            this.DataContext = bindingDataContext;
             BackgroundWorker worker = new BackgroundWorker();
 
             worker.DoWork += WorkThreadRealSizeOnDisk;
@@ -71,13 +71,13 @@ namespace SteamMoverWPF
         }
         private void comboBoxLeft_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
         {
-            mainWindowViewModel.GamesLeft = ((Library)comboBoxLeft.SelectedItem).GamesList;
+            bindingDataContext.GamesLeft = ((Library)comboBoxLeft.SelectedItem).GamesList;
         }
 
 
         private void comboBoxRight_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
         {
-            mainWindowViewModel.GamesRight = ((Library)comboBoxRight.SelectedItem).GamesList;
+            bindingDataContext.GamesRight = ((Library)comboBoxRight.SelectedItem).GamesList;
         }
 
 
