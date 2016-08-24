@@ -21,5 +21,17 @@
         </DataGrid>
         <Button x:Name="buttonRight" Content="-&gt;" HorizontalAlignment="Left" Margin="379,234,0,0" VerticalAlignment="Top" Width="75" Click="buttonRight_Click_1"/>
         <Button x:Name="buttonLeft" Content="&lt;-" HorizontalAlignment="Left" Margin="379,335,0,0" VerticalAlignment="Top" Width="75" Click="buttonLeft_Click_1"/>
+        <Menu x:Name="menu" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="338">
+            <MenuItem Header="File">
+                <MenuItem Header="MenuItem" HorizontalAlignment="Left" Width="140"/>
+                <MenuItem Header="MenuItem" HorizontalAlignment="Left" Width="140"/>
+            </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="MenuItem" HorizontalAlignment="Left" Width="140"/>
+            </MenuItem>
+            <MenuItem Header="View"/>
+            <MenuItem Header="Help"/>
+            <MenuItem Header="Help"/>
+        </Menu>
     </Grid>
 </Window>

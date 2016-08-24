@@ -23,7 +23,7 @@ namespace SteamMoverWPF
                 {
                     steamPath = registryKey.GetValue("SteamPath");
                 }
-                catch (NullReferenceException e)
+                catch (NullReferenceException)
                 {
                     return "";
                 }
@@ -116,7 +116,7 @@ namespace SteamMoverWPF
             {
                 FldrSize = (double)FSO.GetFolder(Fldr).Size;
             }
-            catch (DirectoryNotFoundException e)
+            catch (DirectoryNotFoundException)
             {
                 return -1;
             }
