@@ -53,10 +53,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BindingDataContext.cs" />
     <Compile Include="Entities\Game.cs" />
     <Compile Include="Entities\Library.cs" />
     <Compile Include="InteropSHFileOperation.cs" />
-    <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Util\SortableBindingList.cs" />
     <Compile Include="ValveFileReader.cs" />
     <Page Include="MainWindow.xaml">
