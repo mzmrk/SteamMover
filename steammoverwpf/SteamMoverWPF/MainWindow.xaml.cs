@@ -15,6 +15,7 @@ namespace SteamMoverWPF
         LibraryManager libraryManager = new LibraryManager();
         //Thread threadRealSizeOnDisk;
         BindingDataContext bindingDataContext;
+        System.Threading.ManualResetEvent pauseBackgroundWorker = new System.Threading.ManualResetEvent(true);
 
         public void init()
         {
@@ -46,6 +47,7 @@ namespace SteamMoverWPF
                 {
                     foreach (Game game in library.GamesList.ToArray())
                     {
+                    pauseBackgroundWorker.WaitOne();
                         libraryDetector.detectRealSizeOnDisk(library, game);
                         if (game.RealSizeOnDisk == -1)
                         {
@@ -88,6 +90,7 @@ namespace SteamMoverWPF
             string gameFolder = ((Game)dataGridLeft.SelectedItem).GameDirectory;
             int appID = ((Game)dataGridLeft.SelectedItem).AppID;
 
+            pauseBackgroundWorker.Reset();
             if (!libraryManager.moveGame(source, destination, gameFolder))
             {
                 //TODO: Reverse move game folder operation? do some cleanup?
@@ -98,6 +101,7 @@ namespace SteamMoverWPF
                 //TODO: Reverse move game folder operation? do some cleanup?
                 return;
             }
+            pauseBackgroundWorker.Set();
 
             destination.GamesList.Add((Game)dataGridLeft.SelectedItem);
             source.GamesList.Remove((Game)dataGridLeft.SelectedItem);
@@ -110,6 +114,7 @@ namespace SteamMoverWPF
             string gameFolder = ((Game)dataGridRight.SelectedItem).GameDirectory;
             int appID = ((Game)dataGridRight.SelectedItem).AppID;
 
+            pauseBackgroundWorker.Reset();
             if (!libraryManager.moveGame(source, destination, gameFolder))
             {
                 //TODO: Reverse move game folder operation? do some cleanup?
@@ -120,7 +125,8 @@ namespace SteamMoverWPF
                 //TODO: Reverse move game folder operation? do some cleanup?
                 return;
             }
-            
+            pauseBackgroundWorker.Set();
+
             destination.GamesList.Add((Game)dataGridRight.SelectedItem);
             source.GamesList.Remove((Game)dataGridRight.SelectedItem);
         }
