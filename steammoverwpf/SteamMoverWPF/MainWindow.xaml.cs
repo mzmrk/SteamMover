@@ -1,5 +1,6 @@
 ﻿using SteamMoverWPF.Entities;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -58,6 +59,15 @@ namespace SteamMoverWPF
                 }
         }
 
+        public bool isSteamRunning()
+        {
+            if (Process.GetProcessesByName("Steam").Length > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
         void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             string errorMessage = string.Format("An unhandled exception occurred: {0} {1}", e.Exception.Message, e.Exception.ToString());
@@ -85,50 +95,63 @@ namespace SteamMoverWPF
 
         private void buttonRight_Click_1(object sender, RoutedEventArgs e)
         {
-            Library source = (Library)comboBoxLeft.SelectedItem;
-            Library destination = (Library)comboBoxRight.SelectedItem;
-            string gameFolder = ((Game)dataGridLeft.SelectedItem).GameDirectory;
-            int appID = ((Game)dataGridLeft.SelectedItem).AppID;
+            if (!isSteamRunning())
+            {            
+                Library source = (Library)comboBoxLeft.SelectedItem;
+                Library destination = (Library)comboBoxRight.SelectedItem;
+                string gameFolder = ((Game)dataGridLeft.SelectedItem).GameDirectory;
+                int appID = ((Game)dataGridLeft.SelectedItem).AppID;
 
-            pauseBackgroundWorker.Reset();
-            if (!libraryManager.moveGame(source, destination, gameFolder))
-            {
-                //TODO: Reverse move game folder operation? do some cleanup?
-                return;
-            }
-            if (!libraryManager.moveACF(source, destination, appID))
-            {
-                //TODO: Reverse move game folder operation? do some cleanup?
-                return;
-            }
-            pauseBackgroundWorker.Set();
+                pauseBackgroundWorker.Reset();
+                if (!libraryManager.moveGame(source, destination, gameFolder))
+                {
+                    //TODO: Reverse move game folder operation? do some cleanup?
+                    return;
+                }
+                if (!libraryManager.moveACF(source, destination, appID))
+                {
+                    //TODO: Reverse move game folder operation? do some cleanup?
+                    return;
+                }
+                pauseBackgroundWorker.Set();
 
-            destination.GamesList.Add((Game)dataGridLeft.SelectedItem);
-            source.GamesList.Remove((Game)dataGridLeft.SelectedItem);
+                destination.GamesList.Add((Game)dataGridLeft.SelectedItem);
+                source.GamesList.Remove((Game)dataGridLeft.SelectedItem);
+            } else
+            {
+                MessageBox.Show("Turn Off Steam before moving any games.");
+            }
         }
 
         private void buttonLeft_Click_1(object sender, RoutedEventArgs e)
         {
-            Library source = (Library)comboBoxRight.SelectedItem;
-            Library destination = (Library)comboBoxLeft.SelectedItem;
-            string gameFolder = ((Game)dataGridRight.SelectedItem).GameDirectory;
-            int appID = ((Game)dataGridRight.SelectedItem).AppID;
-
-            pauseBackgroundWorker.Reset();
-            if (!libraryManager.moveGame(source, destination, gameFolder))
+            if (!isSteamRunning())
             {
-                //TODO: Reverse move game folder operation? do some cleanup?
-                return;
-            }
-            if (!libraryManager.moveACF(source, destination, appID))
-            {
-                //TODO: Reverse move game folder operation? do some cleanup?
-                return;
-            }
-            pauseBackgroundWorker.Set();
+                Library source = (Library)comboBoxRight.SelectedItem;
+                Library destination = (Library)comboBoxLeft.SelectedItem;
+                string gameFolder = ((Game)dataGridRight.SelectedItem).GameDirectory;
+                int appID = ((Game)dataGridRight.SelectedItem).AppID;
 
-            destination.GamesList.Add((Game)dataGridRight.SelectedItem);
-            source.GamesList.Remove((Game)dataGridRight.SelectedItem);
+                pauseBackgroundWorker.Reset();
+                if (!libraryManager.moveGame(source, destination, gameFolder))
+                {
+                    //TODO: Reverse move game folder operation? do some cleanup?
+                    return;
+                }
+                if (!libraryManager.moveACF(source, destination, appID))
+                {
+                    //TODO: Reverse move game folder operation? do some cleanup?
+                    return;
+                }
+                pauseBackgroundWorker.Set();
+
+                destination.GamesList.Add((Game)dataGridRight.SelectedItem);
+                source.GamesList.Remove((Game)dataGridRight.SelectedItem);
+            }
+            else
+            {
+                MessageBox.Show("Turn Off Steam before moving any games.");
+            }
         }
     }
 }
