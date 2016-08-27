@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace SteamMoverWPF.Entities
 {
-    class Game : INotifyPropertyChanged
+    public class Game : INotifyPropertyChanged
     {
         private int appID;
         public int AppID

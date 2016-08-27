@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -53,12 +54,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BindingDataContext.cs" />
+    <Compile Include="Entities\BindingDataContext.cs" />
     <Compile Include="Entities\Game.cs" />
     <Compile Include="Entities\Library.cs" />
-    <Compile Include="Util\InteropSHFileOperation.cs" />
-    <Compile Include="Util\SortableBindingList.cs" />
-    <Compile Include="ValveFileReader.cs" />
+    <Compile Include="Utility\InteropSHFileOperation.cs" />
+    <Compile Include="Utility\SortableBindingList.cs" />
+    <Compile Include="Utility\ValveFileReader.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -67,8 +68,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LibraryDetector.cs" />
-    <Compile Include="LibraryManager.cs" />
+    <Compile Include="Utility\LibraryDetector.cs" />
+    <Compile Include="Utility\LibraryManager.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

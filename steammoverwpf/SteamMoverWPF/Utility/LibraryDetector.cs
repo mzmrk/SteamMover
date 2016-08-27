@@ -10,11 +10,9 @@ namespace SteamMoverWPF
 {
 
 
-    class LibraryDetector
+    static class LibraryDetector
     {
-        public List<Library> libraryList = new List<Library>();
-        public string steamPath;
-        string detectSteamPath()
+        private static string detectSteamPath()
         {
             using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam"))
             {
@@ -36,18 +34,19 @@ namespace SteamMoverWPF
                 return "";
             }
         }
-        List<Library> detectSteamLibraries(string steamPath)
+        private static void detectSteamLibraries()
         {
-            List<Library> libraryList = new List<Library>();
+            BindingDataContext.Instance.LibraryList.Clear();
             ValveFileReader vfr = new ValveFileReader();
-            vfr.readFile(steamPath + "\\steamapps\\libraryfolders.vdf");
+            vfr.readFile(BindingDataContext.Instance.SteamPath + "\\steamapps\\libraryfolders.vdf");
             if (vfr.name != "LibraryFolders")
             {
-                return null;
+                //TODO: Implement error handling.
+                return;
             }
             Library library = new Library();
-            library.LibraryDirectory = steamPath + "\\SteamApps";
-            libraryList.Add(library);
+            library.LibraryDirectory = BindingDataContext.Instance.SteamPath + "\\SteamApps";
+            BindingDataContext.Instance.LibraryList.Add(library);
             foreach (ValveFileItem vfi in vfr.itemsList)
             {
                 if (vfi.name.Equals("TimeNextStatsReport") || vfi.name.Equals("ContentStatsID"))
@@ -61,11 +60,10 @@ namespace SteamMoverWPF
                 }
                 library = new Library();
                 library.LibraryDirectory = vfi.value + "\\SteamApps";
-                libraryList.Add(library);
+                BindingDataContext.Instance.LibraryList.Add(library);
             }
-            return libraryList;
         }
-        Library detectSteamGames(Library library)
+        private static Library detectSteamGames(Library library)
         {
             string[] filePaths = Directory.GetFiles(library.LibraryDirectory, "*.acf");
             SortableBindingList<Game> gamesList = new SortableBindingList<Game>();
@@ -107,7 +105,7 @@ namespace SteamMoverWPF
             library.GamesList = gamesList;
             return library;
         }
-        public double GetWSHFolderSize(string Fldr)
+        private static double GetWSHFolderSize(string Fldr)
         {
             //Reference "Windows Script Host Object Model" on the COM tab.
             IWshRuntimeLibrary.FileSystemObject FSO = new IWshRuntimeLibrary.FileSystemObject();
@@ -123,20 +121,35 @@ namespace SteamMoverWPF
             Marshal.FinalReleaseComObject(FSO);
             return FldrSize;
         }
-        public void run()
+        public static void run()
         {
-            steamPath = detectSteamPath();
-            if (steamPath == null || steamPath == "")
+            BindingDataContext.Instance.SteamPath = detectSteamPath();
+            if (BindingDataContext.Instance.SteamPath == null || BindingDataContext.Instance.SteamPath == "")
             {
-                System.Environment.Exit(1);
+                //TODO: Show error message!
+                throw new Exception("Steam path does not exist. Please run Steam atleast once.");
             }
-            libraryList = detectSteamLibraries(steamPath);
-            foreach (Library library in libraryList)
+            detectSteamLibraries();
+            foreach (Library library in BindingDataContext.Instance.LibraryList)
             {
                 detectSteamGames(library);
             }
         }
-        public void detectRealSizeOnDisk(Library library, Game game)
+        public static void refresh()
+        {
+            BindingDataContext.Instance.SteamPath = detectSteamPath();
+            if (BindingDataContext.Instance.SteamPath == null || BindingDataContext.Instance.SteamPath == "")
+            {
+                //TODO: Show error message!
+                throw new Exception("Steam path does not exist. Please run Steam atleast once.");
+            }
+            detectSteamLibraries();
+            foreach (Library library in BindingDataContext.Instance.LibraryList)
+            {
+                detectSteamGames(library);
+            }
+        }
+        public static void detectRealSizeOnDisk(Library library, Game game)
         {
             game.RealSizeOnDisk = GetWSHFolderSize(library.LibraryDirectory + "\\common\\" + game.GameDirectory);
 

@@ -3,7 +3,7 @@ using SteamMoverWPF.Util;
 
 namespace SteamMoverWPF.Entities
 {
-    class Library : INotifyPropertyChanged
+    public class Library : INotifyPropertyChanged
     {
         private SortableBindingList<Game> gamesList;
         public SortableBindingList<Game> GamesList
