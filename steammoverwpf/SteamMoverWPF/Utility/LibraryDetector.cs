@@ -3,6 +3,7 @@ using SteamMoverWPF.Entities;
 using SteamMoverWPF.Util;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -34,19 +35,18 @@ namespace SteamMoverWPF
                 return "";
             }
         }
-        private static void detectSteamLibraries()
+        private static BindingList<Library> detectSteamLibraries(string steamPath, BindingList<Library> libraryList)
         {
-            BindingDataContext.Instance.LibraryList.Clear();
             ValveFileReader vfr = new ValveFileReader();
-            vfr.readFile(BindingDataContext.Instance.SteamPath + "\\steamapps\\libraryfolders.vdf");
+            vfr.readFile(steamPath + "\\steamapps\\libraryfolders.vdf");
             if (vfr.name != "LibraryFolders")
             {
                 //TODO: Implement error handling.
-                return;
+                throw new Exception("libraryfolder.vdf has wrong format.");
             }
             Library library = new Library();
-            library.LibraryDirectory = BindingDataContext.Instance.SteamPath + "\\SteamApps";
-            BindingDataContext.Instance.LibraryList.Add(library);
+            library.LibraryDirectory = steamPath + "\\SteamApps";
+            libraryList.Add(library);
             foreach (ValveFileItem vfi in vfr.itemsList)
             {
                 if (vfi.name.Equals("TimeNextStatsReport") || vfi.name.Equals("ContentStatsID"))
@@ -60,8 +60,9 @@ namespace SteamMoverWPF
                 }
                 library = new Library();
                 library.LibraryDirectory = vfi.value + "\\SteamApps";
-                BindingDataContext.Instance.LibraryList.Add(library);
+                libraryList.Add(library);
             }
+            return libraryList;
         }
         private static Library detectSteamGames(Library library)
         {
@@ -100,6 +101,7 @@ namespace SteamMoverWPF
                 {
                     // usuń z listy, oznacz jako nieaktywny, coś jest nie tak z tym folderem.
                 }
+                game.RealSizeOnDisk_isChecked = false;
                 gamesList.Add(game);
             }
             library.GamesList = gamesList;
@@ -129,7 +131,7 @@ namespace SteamMoverWPF
                 //TODO: Show error message!
                 throw new Exception("Steam path does not exist. Please run Steam atleast once.");
             }
-            detectSteamLibraries();
+            BindingDataContext.Instance.LibraryList = detectSteamLibraries(BindingDataContext.Instance.SteamPath, BindingDataContext.Instance.LibraryList);
             foreach (Library library in BindingDataContext.Instance.LibraryList)
             {
                 detectSteamGames(library);
@@ -137,22 +139,54 @@ namespace SteamMoverWPF
         }
         public static void refresh()
         {
-            BindingDataContext.Instance.SteamPath = detectSteamPath();
-            if (BindingDataContext.Instance.SteamPath == null || BindingDataContext.Instance.SteamPath == "")
+            //Rebuild libraries
+            BindingList<Library> libraryList = new BindingList<Library>();
+            string steamPath = detectSteamPath();
+
+            if (steamPath == null || steamPath == "")
             {
                 //TODO: Show error message!
                 throw new Exception("Steam path does not exist. Please run Steam atleast once.");
             }
-            detectSteamLibraries();
-            foreach (Library library in BindingDataContext.Instance.LibraryList)
+            libraryList = detectSteamLibraries(steamPath, libraryList);
+            foreach (Library library in libraryList)
             {
                 detectSteamGames(library);
             }
+
+            //Copy games sizes on disk
+            foreach (Library libraryOld in BindingDataContext.Instance.LibraryList)
+            {
+                foreach (Library libraryNew in libraryList)
+                {
+                    if (libraryOld.LibraryDirectory == libraryNew.LibraryDirectory)
+                    {
+                        foreach (Game gameOld in libraryOld.GamesList)
+                        {
+                            foreach (Game gameNew in libraryNew.GamesList)
+                            {
+                                if (gameOld.AppID == gameNew.AppID)
+                                {
+                                    gameNew.RealSizeOnDisk = gameOld.RealSizeOnDisk;
+                                    gameNew.RealSizeOnDisk_isChecked = gameOld.RealSizeOnDisk_isChecked;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    }
+
+                }
+            }
+
+
+            //overwrite libraries in bindingdatacontext
+            BindingDataContext.Instance.LibraryList = libraryList;
         }
         public static void detectRealSizeOnDisk(Library library, Game game)
         {
             game.RealSizeOnDisk = GetWSHFolderSize(library.LibraryDirectory + "\\common\\" + game.GameDirectory);
-
+            game.RealSizeOnDisk_isChecked = true;
         }
     }
 }

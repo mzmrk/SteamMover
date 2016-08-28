@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
+using System.Windows.Media;
 
 namespace SteamMoverWPF.Entities
 {
@@ -40,6 +41,12 @@ namespace SteamMoverWPF.Entities
         {
             get { return (realSizeOnDisk / 1024 / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture) + " GB"; }
             set {  }
+        }
+        private bool realSizeOnDisk_isChecked;
+        public bool RealSizeOnDisk_isChecked
+        {
+            get { return realSizeOnDisk_isChecked; }
+            set { realSizeOnDisk_isChecked = value; OnPropertyChanged("RealSizeOnDisk_isChecked"); }
         }
 
 

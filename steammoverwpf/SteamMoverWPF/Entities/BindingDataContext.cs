@@ -6,7 +6,7 @@ namespace SteamMoverWPF
 {
     public sealed class BindingDataContext : INotifyPropertyChanged
     {
-        #region Singleton
+        #region Singleton Stuff
         private static readonly BindingDataContext instance = new BindingDataContext();
 
         // Explicit static constructor to tell C# compiler
@@ -28,7 +28,6 @@ namespace SteamMoverWPF
             }
         }
         #endregion
-
 
         private string steamPath;
         public string SteamPath
