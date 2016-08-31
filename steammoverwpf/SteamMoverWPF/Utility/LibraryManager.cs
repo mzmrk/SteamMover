@@ -1,6 +1,9 @@
 ﻿using SteamMoverWPF.Entities;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SteamMoverWPF
@@ -28,45 +31,74 @@ namespace SteamMoverWPF
             string destinationFile = destination.LibraryDirectory + "\\" + "appmanifest_" + appID+ ".acf";
             return moveFolder(sourceFile, destinationFile);
         }
-        public static void addLibrary()
+
+        private static bool validateSelectedPath(string selectedPath)
+        {
+            if ((selectedPath == Path.GetPathRoot(selectedPath)))
+            {
+                MessageBox.Show("Cannot be RootFolder");
+                return false;
+            }
+
+            string combinedPaths = Path.Combine(selectedPath, "SteamApps").ToLower();
+            foreach (Library library in BindingDataContext.Instance.LibraryList)
+            {
+                if (combinedPaths.Contains(library.LibraryDirectory.ToLower()))
+                {
+                    MessageBox.Show("Cannot be already added library");
+                    return false;
+                }
+            }
+
+            foreach (string directory in System.IO.Directory.GetDirectories(selectedPath))
+            {
+                string directoryTmp = Path.GetFileName(directory);
+                if (string.Equals(directoryTmp, "steamapps", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            int countFiles = System.IO.Directory.GetFiles(selectedPath).Length;
+            int countDirs = System.IO.Directory.GetDirectories(selectedPath).Length;
+            if (!(countFiles == 0 && countDirs == 0))
+            {
+                MessageBox.Show("Selected folder must be empty.");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static bool addLibrary(Task task)
         {
             //wybierz folder
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
             folderBrowserDialog.Description = "Create or select new Steam library folder:";
-
-
-            ////=========== Refresh library list before adding
-
+            bool isSelectedPathValidated = false;
 
             while (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
+                task.Wait();
                 string selectedPath = folderBrowserDialog.SelectedPath;
-                //walidacja
-                //sprawdz czy biblioteka jest juz dodana w pliku libiraries.vdf
-                /*LibraryDetector libraryDetector = new LibraryDetector();
-                string steamPath = libraryDetector.detectSteamPath();
-                if (steamPath == null || steamPath == "")
+                isSelectedPathValidated = validateSelectedPath(selectedPath);
+                if (isSelectedPathValidated)
                 {
-                    //TODO: Show error message!
-                    throw new Exception("Steam path does not exist. Please run Steam atleast once.");
+                    break;
                 }
-                List<Library> libraryList = libraryDetector.detectSteamLibraries(steamPath);
-                */
-                //if (BindingDataContext.Instance.LibraryList.Exists(x => x.LibraryDirectory.Equals(selectedPath + "\\SteamApps", StringComparison.CurrentCultureIgnoreCase))) break;
-                //sprawdz czy biblioteka jest juz dodana w klasie przechowującej biblioteki
-                //MainWindow mainWindow;
-
-                
-                //sprawdz czy folder jest istniejącą biblioteką(w sensie folder steamapps musi byc obecny)
-                //sprawdz czy folder jest pusty
-                //cannot be drive root
-                //cannot be current steam folder
-                //cannot be in steamapps in one of current libraries
-
             }
+            if (isSelectedPathValidated)
+            {
+                //dodaj wpis do libraries.vdf
 
-
-            //add to libraries.vdf file
+                return true;
+            } else
+            {
+                task.Wait();
+                return false;
+            }
         }
         public static void removeLibrary()
         {

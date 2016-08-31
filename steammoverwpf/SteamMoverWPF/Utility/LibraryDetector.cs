@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace SteamMoverWPF
 {
@@ -107,7 +108,7 @@ namespace SteamMoverWPF
             library.GamesList = gamesList;
             return library;
         }
-        private static double GetWSHFolderSize(string Fldr)
+        public static double GetWSHFolderSize(string Fldr)
         {
             //Reference "Windows Script Host Object Model" on the COM tab.
             IWshRuntimeLibrary.FileSystemObject FSO = new IWshRuntimeLibrary.FileSystemObject();
@@ -178,15 +179,7 @@ namespace SteamMoverWPF
 
                 }
             }
-
-
-            //overwrite libraries in bindingdatacontext
             BindingDataContext.Instance.LibraryList = libraryList;
-        }
-        public static void detectRealSizeOnDisk(Library library, Game game)
-        {
-            game.RealSizeOnDisk = GetWSHFolderSize(library.LibraryDirectory + "\\common\\" + game.GameDirectory);
-            game.RealSizeOnDisk_isChecked = true;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SteamMoverWPF.Entities;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace SteamMoverWPF
 {
@@ -14,9 +16,20 @@ namespace SteamMoverWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        Task task;
+        Library comboBoxLeftSelectedItem;
+        Library comboBoxRightSelectedItem;
+
+
+        Task realSizeOnDiskTask;
         CancellationTokenSource cancellationTokenSource;
         CancellationToken cancellationToken;
+        private int taskRestartRequestedLock = 0;
+        private volatile bool taskRestartRequested = false;
+        int lastFinishedGameAppID = 0;
+        double lastFInishedRealSizeOnDisk = 0;
+        ManualResetEvent blockMainThread = new ManualResetEvent(false);
+
+
 
         public void init()
         {
@@ -27,38 +40,86 @@ namespace SteamMoverWPF
             dataGridLeft.Items.SortDescriptions.Add(sortDescription);
             dataGridRight.Items.SortDescriptions.Add(sortDescription);
 
-            startTask();
+            if (BindingDataContext.Instance.LibraryList.Count == 1)
+            {
+                comboBoxLeft.SelectedIndex = 0;
+            } else if (BindingDataContext.Instance.LibraryList.Count > 1)
+            {
+                comboBoxLeft.SelectedIndex = 0;
+                comboBoxRight.SelectedIndex = 1;
+            }
+
+            taskRestartRequested = true;
+            restartRealSizeOnDiskTask();
         }
 
-        public void startTask()
+        public void refreshLibraries()
         {
-            cancellationTokenSource = new CancellationTokenSource();
-            cancellationToken = cancellationTokenSource.Token;
-            task = new Task(WorkThreadRealSizeOnDisk, cancellationToken);
-            task.Start();
+            taskRestartRequested = false;
+            cancellationTokenSource.Cancel();
+            blockMainThread.WaitOne();
+            LibraryDetector.refresh();
+            taskRestartRequested = true;
+            restartRealSizeOnDiskTask();
+        }
+
+        public async void restartRealSizeOnDiskTask()
+        {
+            if (Interlocked.Increment(ref taskRestartRequestedLock) == 1)
+            {
+                if (realSizeOnDiskTask != null) await realSizeOnDiskTask;
+                if (taskRestartRequested)
+                {
+                    cancellationTokenSource = new CancellationTokenSource();
+                    cancellationToken = cancellationTokenSource.Token;
+                    realSizeOnDiskTask = new Task(WorkThreadRealSizeOnDisk, cancellationToken);
+                    blockMainThread.Reset();
+                    realSizeOnDiskTask.Start();
+                }
+            }
+            Interlocked.Decrement(ref taskRestartRequestedLock);
         }
 
         public void WorkThreadRealSizeOnDisk()
         {
             foreach (Library library in BindingDataContext.Instance.LibraryList)
             {
-                foreach (Game game in library.GamesList.ToArray())
+                foreach (Game game in library.GamesList)
                 {
                     if (!game.RealSizeOnDisk_isChecked)
                     {
-                        LibraryDetector.detectRealSizeOnDisk(library, game);
+                        if (lastFinishedGameAppID == game.AppID)
+                        {
+                            game.RealSizeOnDisk = lastFInishedRealSizeOnDisk;
+                            game.RealSizeOnDisk_isChecked = true;
+                            lastFinishedGameAppID = 0;
+                            lastFInishedRealSizeOnDisk = 0;
+                        }
+                        else
+                        {
+                            blockMainThread.Set();
+                            double realSizeOnDisk = LibraryDetector.GetWSHFolderSize(library.LibraryDirectory + "\\common\\" + game.GameDirectory);
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                lastFinishedGameAppID = game.AppID;
+                                lastFInishedRealSizeOnDisk = realSizeOnDisk;
+                                return;
+                            }
+                            blockMainThread.Reset();
+                            game.RealSizeOnDisk = realSizeOnDisk;
+                            game.RealSizeOnDisk_isChecked = true;
+                        }
+
+
                         if (game.RealSizeOnDisk == -1)
                         {
                             // usuń z listy, oznacz jako nieaktywny, coś jest nie tak z tym folderem.
                             //library.GamesList.Remove(game);
                         }
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            return;
-                        }
                     }
                 }
             }
+            blockMainThread.Set();
         }
 
         public bool isSteamRunning()
@@ -90,6 +151,17 @@ namespace SteamMoverWPF
                 BindingDataContext.Instance.GamesLeft = ((Library)comboBoxLeft.SelectedItem).GamesList;
                 dataGridLeft.Items.SortDescriptions.Clear();
                 dataGridLeft.Items.SortDescriptions.Add(new SortDescription("GameName", ListSortDirection.Ascending));
+                comboBoxLeftSelectedItem = (Library)comboBoxLeft.SelectedItem;
+            } else
+            {
+                foreach (Library library in BindingDataContext.Instance.LibraryList)
+                {
+                    if (comboBoxLeftSelectedItem.LibraryDirectory.Equals(library.LibraryDirectory, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        comboBoxLeft.SelectedItem = library;
+                        break;
+                    }
+                }
             }
         }
 
@@ -101,6 +173,18 @@ namespace SteamMoverWPF
                 BindingDataContext.Instance.GamesRight = ((Library)comboBoxRight.SelectedItem).GamesList;
                 dataGridRight.Items.SortDescriptions.Clear();
                 dataGridRight.Items.SortDescriptions.Add(new SortDescription("GameName", ListSortDirection.Ascending));
+                comboBoxRightSelectedItem = (Library)comboBoxRight.SelectedItem;
+            }
+            else
+            {
+                foreach (Library library in BindingDataContext.Instance.LibraryList)
+                {
+                    if (comboBoxRightSelectedItem.LibraryDirectory.Equals(library.LibraryDirectory, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        comboBoxRight.SelectedItem = library;
+                        break;
+                    }
+                }
             }
         }
 
@@ -115,7 +199,7 @@ namespace SteamMoverWPF
                 int appID = ((Game)dataGridLeft.SelectedItem).AppID;
 
                 cancellationTokenSource.Cancel();
-                task.Wait();
+                realSizeOnDiskTask.Wait();
 
                 if (!LibraryManager.moveGame(source, destination, gameFolder))
                 {
@@ -132,7 +216,7 @@ namespace SteamMoverWPF
                 dataGridRight.Items.SortDescriptions.Clear();
                 dataGridRight.Items.SortDescriptions.Add(new SortDescription("GameName", ListSortDirection.Ascending));
 
-                startTask();
+                restartRealSizeOnDiskTask();
             }
             else
             {
@@ -150,7 +234,7 @@ namespace SteamMoverWPF
                 int appID = ((Game)dataGridRight.SelectedItem).AppID;
 
                 cancellationTokenSource.Cancel();
-                task.Wait();
+                realSizeOnDiskTask.Wait();
 
                 if (!LibraryManager.moveGame(source, destination, gameFolder))
                 {
@@ -167,7 +251,7 @@ namespace SteamMoverWPF
                 dataGridLeft.Items.SortDescriptions.Clear();
                 dataGridLeft.Items.SortDescriptions.Add(new SortDescription("GameName", ListSortDirection.Ascending));
 
-                startTask();
+                restartRealSizeOnDiskTask();
             }
             else
             {
@@ -175,26 +259,14 @@ namespace SteamMoverWPF
             }
         }
 
-        private async void button_Click(object sender, RoutedEventArgs e)
+        private void button_Click(object sender, RoutedEventArgs e)
         {
-            //LibraryManager.addLibrary();
-            //LibraryDetector.refresh();
-            //bindingDataContext.LibraryList = new BindingList<Library>(LibrariesContainer.Instance.LibraryList);
-            //bindingDataContext.OnPropertyChanged("LibraryList");
-            //bindingDataContext.OnPropertyChanged("GamesRight");
-            //bindingDataContext.OnPropertyChanged("GamesLeft");
-            //BindingDataContext.Instance.GamesRight.RemoveAt(8);
-            cancellationTokenSource.Cancel();
-            await task;
-
-            LibraryDetector.refresh();
-
-            comboBoxLeft.SelectedIndex = 0;
-            comboBoxRight.SelectedIndex = 1;
-
-
-            startTask();
-
+            Task task = Task.Run(() => refreshLibraries());
+            bool isAdded = LibraryManager.addLibrary(task);
+            if (isAdded)
+            {
+                refreshLibraries();
+            } 
         }
     }
 }
