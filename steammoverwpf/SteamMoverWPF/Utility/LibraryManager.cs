@@ -74,7 +74,6 @@ namespace SteamMoverWPF
 
         public static bool addLibrary(Task task)
         {
-            //wybierz folder
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
             folderBrowserDialog.Description = "Create or select new Steam library folder:";
             bool isSelectedPathValidated = false;
@@ -94,11 +93,9 @@ namespace SteamMoverWPF
                 //dodaj wpis do libraries.vdf
 
                 return true;
-            } else
-            {
-                task.Wait();
-                return false;
             }
+            task.Wait();
+            return false;
         }
         public static void removeLibrary()
         {
