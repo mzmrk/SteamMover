@@ -38,17 +38,17 @@ namespace SteamMoverWPF
         }
         private static BindingList<Library> detectSteamLibraries(string steamPath, BindingList<Library> libraryList)
         {
-            ValveFileReader vfr = new ValveFileReader();
-            vfr.readFile(steamPath + "\\steamapps\\libraryfolders.vdf");
-            if (vfr.name != "LibraryFolders")
+            SteamConfigFileReader vfr = new SteamConfigFileReader();
+            vfr.readSteamConfigFile(steamPath + "\\steamapps\\libraryfolders.vdf");
+            if (vfr.configType != "LibraryFolders")
             {
                 //TODO: Implement error handling.
                 throw new Exception("libraryfolder.vdf has wrong format.");
             }
             Library library = new Library();
-            library.LibraryDirectory = steamPath + "\\SteamApps";
+            library.LibraryDirectory = steamPath;
             libraryList.Add(library);
-            foreach (ValveFileItem vfi in vfr.itemsList)
+            foreach (SteamConfigFileProperty vfi in vfr.steamConfigFilePropertyList)
             {
                 if (vfi.name.Equals("TimeNextStatsReport") || vfi.name.Equals("ContentStatsID"))
                 {
@@ -59,26 +59,26 @@ namespace SteamMoverWPF
                 {
                     continue;
                 }
-                library = new Library();
-                library.LibraryDirectory = vfi.value + "\\SteamApps";
+                library = new Library(); 
+                library.LibraryDirectory = vfi.value;
                 libraryList.Add(library);
             }
             return libraryList;
         }
         private static Library detectSteamGames(Library library)
         {
-            string[] filePaths = Directory.GetFiles(library.LibraryDirectory, "*.acf");
+            string[] filePaths = Directory.GetFiles(library.SteamAppsDirectory, "*.acf");
             SortableBindingList<Game> gamesList = new SortableBindingList<Game>();
             foreach (string file in filePaths)
             {
-                ValveFileReader vfr = new ValveFileReader();
-                vfr.readFile(file);
-                if (vfr.name != "AppState")
+                SteamConfigFileReader vfr = new SteamConfigFileReader();
+                vfr.readSteamConfigFile(file);
+                if (vfr.configType != "AppState")
                 {
                     return null;
                 }
                 Game game = new Game();
-                foreach (ValveFileItem vfi in vfr.itemsList)
+                foreach (SteamConfigFileProperty vfi in vfr.steamConfigFilePropertyList)
                 {
                     if (vfi.name.Equals("appID"))
                     {
@@ -160,7 +160,7 @@ namespace SteamMoverWPF
             {
                 foreach (Library libraryNew in libraryList)
                 {
-                    if (libraryOld.LibraryDirectory == libraryNew.LibraryDirectory)
+                    if (libraryOld.SteamAppsDirectory == libraryNew.SteamAppsDirectory)
                     {
                         foreach (Game gameOld in libraryOld.GamesList)
                         {

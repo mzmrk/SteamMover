@@ -1,4 +1,6 @@
 ﻿using SteamMoverWPF.Entities;
+using SteamMoverWPF.Util;
+using SteamMoverWPF.Utility;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,15 +22,15 @@ namespace SteamMoverWPF
             return interopSHFileOperation.Execute();
         }
         public static bool moveGame(Library source, Library destination, string gameFolder) {
-            string src = source.LibraryDirectory + "\\common\\" + gameFolder;
-            string dst = destination.LibraryDirectory + "\\common\\" + gameFolder;
+            string src = source.SteamAppsDirectory + "\\common\\" + gameFolder;
+            string dst = destination.SteamAppsDirectory + "\\common\\" + gameFolder;
             return moveFolder(src, dst);
         }
 
         public static bool moveACF(Library source, Library destination, int appID)
         {
-            string sourceFile = source.LibraryDirectory + "\\" + "appmanifest_" + appID + ".acf";
-            string destinationFile = destination.LibraryDirectory + "\\" + "appmanifest_" + appID+ ".acf";
+            string sourceFile = source.SteamAppsDirectory + "\\" + "appmanifest_" + appID + ".acf";
+            string destinationFile = destination.SteamAppsDirectory + "\\" + "appmanifest_" + appID+ ".acf";
             return moveFolder(sourceFile, destinationFile);
         }
 
@@ -43,7 +45,7 @@ namespace SteamMoverWPF
             string combinedPaths = Path.Combine(selectedPath, "SteamApps").ToLower();
             foreach (Library library in BindingDataContext.Instance.LibraryList)
             {
-                if (combinedPaths.Contains(library.LibraryDirectory.ToLower()))
+                if (combinedPaths.Contains(library.SteamAppsDirectory.ToLower()))
                 {
                     MessageBox.Show("Cannot be already added library");
                     return false;
@@ -91,7 +93,12 @@ namespace SteamMoverWPF
             if (isSelectedPathValidated)
             {
                 //dodaj wpis do libraries.vdf
-
+                Library library = new Library();
+                library.GamesList = new SortableBindingList<Game>();
+                library.LibraryDirectory = folderBrowserDialog.SelectedPath;
+                //TODO: Add steamapps folder to the new library!
+                BindingDataContext.Instance.LibraryList.Add(library);
+                SteamConfigFileWriter.writeLibraryList();
                 return true;
             }
             task.Wait();

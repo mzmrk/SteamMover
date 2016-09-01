@@ -59,7 +59,8 @@
     <Compile Include="Entities\Library.cs" />
     <Compile Include="Utility\InteropSHFileOperation.cs" />
     <Compile Include="Utility\SortableBindingList.cs" />
-    <Compile Include="Utility\ValveFileReader.cs" />
+    <Compile Include="Utility\SteamConfigFileReader.cs" />
+    <Compile Include="Utility\SteamConfigFileWriter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

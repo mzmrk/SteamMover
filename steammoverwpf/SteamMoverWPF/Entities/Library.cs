@@ -15,7 +15,12 @@ namespace SteamMoverWPF.Entities
         public string LibraryDirectory
         {
             get { return libraryDirectory; }
-            set { libraryDirectory = value; OnPropertyChanged("LibraryDirectory"); }
+            set { libraryDirectory = value; OnPropertyChanged("LibraryDirectory"); OnPropertyChanged("SteamAppsDirectory"); }
+        }
+        public string SteamAppsDirectory
+        {
+            get { return (libraryDirectory + "\\SteamApps"); }
+            set { throw new System.Exception("Do not edit this Property. Use LibraryDirectory instead."); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

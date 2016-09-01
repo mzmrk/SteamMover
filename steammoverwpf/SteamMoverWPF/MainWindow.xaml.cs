@@ -1,4 +1,5 @@
 ﻿using SteamMoverWPF.Entities;
+using SteamMoverWPF.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -106,7 +107,7 @@ namespace SteamMoverWPF
                         else
                         {
                             blockMainThread.Set();
-                            double realSizeOnDisk = LibraryDetector.GetWSHFolderSize(library.LibraryDirectory + "\\common\\" + game.GameDirectory);
+                            double realSizeOnDisk = LibraryDetector.GetWSHFolderSize(library.SteamAppsDirectory + "\\common\\" + game.GameDirectory);
                             if (RealSizeOnDiskCT.IsCancellationRequested)
                             {
                                 lastFinishedGameAppID = game.AppID;
@@ -164,7 +165,7 @@ namespace SteamMoverWPF
             {
                 foreach (Library library in BindingDataContext.Instance.LibraryList)
                 {
-                    if (comboBoxLeftSelectedItem.LibraryDirectory.Equals(library.LibraryDirectory, StringComparison.InvariantCultureIgnoreCase))
+                    if (comboBoxLeftSelectedItem.SteamAppsDirectory.Equals(library.SteamAppsDirectory, StringComparison.InvariantCultureIgnoreCase))
                     {
                         comboBoxLeft.SelectedItem = library;
                         break;
@@ -187,7 +188,7 @@ namespace SteamMoverWPF
             {
                 foreach (Library library in BindingDataContext.Instance.LibraryList)
                 {
-                    if (comboBoxRightSelectedItem.LibraryDirectory.Equals(library.LibraryDirectory, StringComparison.InvariantCultureIgnoreCase))
+                    if (comboBoxRightSelectedItem.SteamAppsDirectory.Equals(library.SteamAppsDirectory, StringComparison.InvariantCultureIgnoreCase))
                     {
                         comboBoxRight.SelectedItem = library;
                         break;
@@ -272,8 +273,8 @@ namespace SteamMoverWPF
                 LibraryDetector.refresh();
                 startRealSizeOnDiskTask();
             });
-            bool isAdded = LibraryManager.addLibrary(task);
-            if (isAdded)
+            bool isLibraryAdded = LibraryManager.addLibrary(task);
+            if (isLibraryAdded)
             {
                 cancelRealSizeOnDiskTask();
                 LibraryDetector.refresh();
