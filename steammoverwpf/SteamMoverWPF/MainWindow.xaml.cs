@@ -283,5 +283,10 @@ namespace SteamMoverWPF
                 startRealSizeOnDiskTask();
             } 
         }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            LibraryManager.removeLibrary((Library)comboBoxRight.SelectedItem);
+        }
     }
 }

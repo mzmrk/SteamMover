@@ -1,8 +1,10 @@
-﻿using SteamMoverWPF.Entities;
+﻿using Microsoft.VisualBasic;
+using SteamMoverWPF.Entities;
 using SteamMoverWPF.Util;
 using SteamMoverWPF.Utility;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
@@ -105,18 +107,24 @@ namespace SteamMoverWPF
             task.Wait();
             return false;
         }
-        public static void removeLibrary()
+        public static void removeLibrary(Library library)
         {
-            throw new NotImplementedException();
             //delete from libriries.vdf file
+            BindingDataContext.Instance.LibraryList.Remove(library);
+            SteamConfigFileWriter.writeLibraryList();
             //wyswietl komunikat ze biblioteka dalej jest na dysku, zostala tylko usuenieta ze steam.
+            MessageBox.Show("Library will still exist on harddrive. It is only removed from the list.");
             //open windows explorer with library folder
+            Process.Start(library.LibraryDirectory);
         }
-        public static void renameLibrary()
+        public static void renameLibrary(Library library)
         {
-            throw new NotImplementedException();
+            string newLibraryName = Interaction.InputBox("type new library folder name", "Title", "Default Text");
+
+            //library.LibraryDirectory
             //rename in libraries.vdf
             //ranme library folder
+
         }
     }
 }
