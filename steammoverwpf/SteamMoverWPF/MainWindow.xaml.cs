@@ -101,9 +101,9 @@ namespace SteamMoverWPF
                         {
                             game.RealSizeOnDisk = lastFinishedRealSizeOnDisk;
                             game.RealSizeOnDisk_isChecked = true;
+                            SteamConfigFileWriter.writeRealSizeOnDisk(library.SteamAppsDirectory + "\\appmanifest_" + lastFinishedGameAppID + ".acf", lastFinishedRealSizeOnDisk);
                             lastFinishedGameAppID = 0;
                             lastFinishedRealSizeOnDisk = 0;
-                            SteamConfigFileWriter.writeRealSizeOnDisk(library.SteamAppsDirectory + "\\appmanifest_" + lastFinishedGameAppID + ".acf", lastFinishedRealSizeOnDisk);
                         }
                         else
                         {

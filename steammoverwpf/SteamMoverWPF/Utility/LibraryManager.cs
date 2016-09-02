@@ -97,6 +97,7 @@ namespace SteamMoverWPF
                 library.GamesList = new SortableBindingList<Game>();
                 library.LibraryDirectory = folderBrowserDialog.SelectedPath;
                 //TODO: Add steamapps folder to the new library!
+                Directory.CreateDirectory(folderBrowserDialog.SelectedPath + "\\steamapps");
                 BindingDataContext.Instance.LibraryList.Add(library);
                 SteamConfigFileWriter.writeLibraryList();
                 return true;
