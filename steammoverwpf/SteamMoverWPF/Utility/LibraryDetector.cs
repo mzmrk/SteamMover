@@ -108,22 +108,6 @@ namespace SteamMoverWPF
             library.GamesList = gamesList;
             return library;
         }
-        public static double GetWSHFolderSize(string Fldr)
-        {
-            //Reference "Windows Script Host Object Model" on the COM tab.
-            IWshRuntimeLibrary.FileSystemObject FSO = new IWshRuntimeLibrary.FileSystemObject();
-            double FldrSize;
-            try
-            {
-                FldrSize = (double)FSO.GetFolder(Fldr).Size;
-            }
-            catch (DirectoryNotFoundException)
-            {
-                return -1;
-            }
-            Marshal.FinalReleaseComObject(FSO);
-            return FldrSize;
-        }
         public static void run()
         {
             BindingDataContext.Instance.SteamPath = detectSteamPath();

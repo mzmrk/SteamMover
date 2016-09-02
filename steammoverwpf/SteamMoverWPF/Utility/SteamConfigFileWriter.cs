@@ -39,9 +39,29 @@ namespace SteamMoverWPF.Utility
             streamWriter.Write(writer);
             streamWriter.Close();
         }
-        public static void writeRealSizeOnDisk()
+        public static void writeRealSizeOnDisk(string acfPath, double realSizeOnDisk)
         {
-            throw new NotImplementedException();
+            StringBuilder writer = new StringBuilder();
+            StreamReader streamReader = new StreamReader(acfPath);
+
+            string line;
+            while ((line = streamReader.ReadLine()) != null)
+            {
+                string propertyName = UtilityBox.GetSubstringByString('"', '"', line);
+                if (propertyName != null && propertyName.Equals("SizeOnDisk"))
+                {
+                    writer.AppendLine("\t\"SizeOnDisk\"\t\t\"" + realSizeOnDisk + "\"");
+                } else
+                {
+                    writer.AppendLine(line);
+                }
+                
+            }
+            streamReader.Close();
+
+            StreamWriter streamWriter = new StreamWriter(acfPath);
+            streamWriter.Write(writer);
+            streamWriter.Close();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SteamMoverWPF.Utility;
+using System.Collections.Generic;
 
 namespace SteamMoverWPF
 {
@@ -17,7 +18,7 @@ namespace SteamMoverWPF
             string line;
             System.IO.StreamReader streamReader = new System.IO.StreamReader(steamPath);
             // "LibraryFolders"
-            configType = GetSubstringByString('"', '"', streamReader.ReadLine());
+            configType = UtilityBox.GetSubstringByString('"', '"', streamReader.ReadLine());
             //{
             /*
             "appID"		"33900"
@@ -35,23 +36,14 @@ namespace SteamMoverWPF
                 }
                 line = line.Replace("\\\\", "\\");
                 SteamConfigFileProperty steamConfigFileProperty = new SteamConfigFileProperty();
-                steamConfigFileProperty.name = GetSubstringByString('"', '"', line);
+                steamConfigFileProperty.name = UtilityBox.GetSubstringByString('"', '"', line);
                 line = line.Substring(line.IndexOf('"') + 1);
                 line = line.Substring(line.IndexOf('"') + 1);
-                steamConfigFileProperty.value = GetSubstringByString('"', '"', line);
+                steamConfigFileProperty.value = UtilityBox.GetSubstringByString('"', '"', line);
                 steamConfigFilePropertyList.Add(steamConfigFileProperty);
             }
 
             streamReader.Close();
-        }
-        public string GetSubstringByString(char a, char b, string c)
-        {
-            if (c == "") { return ""; }
-            int start = c.IndexOf(a);
-            string subString = c.Substring(start + 1);
-            int end = subString.IndexOf(b);
-            string returnString = c.Substring(start + 1, end);
-            return returnString;
         }
     }
 }

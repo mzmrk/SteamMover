@@ -103,11 +103,12 @@ namespace SteamMoverWPF
                             game.RealSizeOnDisk_isChecked = true;
                             lastFinishedGameAppID = 0;
                             lastFinishedRealSizeOnDisk = 0;
+                            SteamConfigFileWriter.writeRealSizeOnDisk(library.SteamAppsDirectory + "\\appmanifest_" + lastFinishedGameAppID + ".acf", lastFinishedRealSizeOnDisk);
                         }
                         else
                         {
                             blockMainThread.Set();
-                            double realSizeOnDisk = LibraryDetector.GetWSHFolderSize(library.SteamAppsDirectory + "\\common\\" + game.GameDirectory);
+                            double realSizeOnDisk = UtilityBox.GetWSHFolderSize(library.SteamAppsDirectory + "\\common\\" + game.GameDirectory);
                             if (RealSizeOnDiskCT.IsCancellationRequested)
                             {
                                 lastFinishedGameAppID = game.AppID;
@@ -117,6 +118,7 @@ namespace SteamMoverWPF
                             blockMainThread.Reset();
                             game.RealSizeOnDisk = realSizeOnDisk;
                             game.RealSizeOnDisk_isChecked = true;
+                            SteamConfigFileWriter.writeRealSizeOnDisk(library.SteamAppsDirectory + "\\appmanifest_" + game.AppID + ".acf", realSizeOnDisk);
                         }
 
 

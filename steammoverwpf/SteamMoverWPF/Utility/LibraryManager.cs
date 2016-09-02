@@ -106,12 +106,14 @@ namespace SteamMoverWPF
         }
         public static void removeLibrary()
         {
+            throw new NotImplementedException();
             //delete from libriries.vdf file
             //wyswietl komunikat ze biblioteka dalej jest na dysku, zostala tylko usuenieta ze steam.
             //open windows explorer with library folder
         }
         public static void renameLibrary()
         {
+            throw new NotImplementedException();
             //rename in libraries.vdf
             //ranme library folder
         }

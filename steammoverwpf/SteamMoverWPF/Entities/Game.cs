@@ -24,11 +24,11 @@ namespace SteamMoverWPF.Entities
             get { return gameDirectory; }
             set { gameDirectory = value; OnPropertyChanged("GameDirectory"); }
         }
-        private long sizeOnDisk;
-        public long SizeOnDisk
+        private double sizeOnDisk;
+        public double SizeOnDisk
         {
             get { return sizeOnDisk; }
-            set { sizeOnDisk = value; OnPropertyChanged("SizeOnDisk"); }
+            set { sizeOnDisk = value; OnPropertyChanged("SizeOnDisk"); OnPropertyChanged("RealSizeOnDiskString"); }
         }
         private double realSizeOnDisk;
         public double RealSizeOnDisk
@@ -39,7 +39,16 @@ namespace SteamMoverWPF.Entities
 
         public string RealSizeOnDiskString
         {
-            get { return (realSizeOnDisk / 1024 / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture) + " GB"; }
+            get
+            {
+                if (realSizeOnDisk_isChecked)
+                {
+                    return (realSizeOnDisk / 1024 / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture) + " GB";
+                } else
+                {
+                    return (sizeOnDisk / 1024 / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture) + " GB";
+                }
+            }
             set {  }
         }
         private bool realSizeOnDisk_isChecked;
