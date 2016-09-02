@@ -163,6 +163,16 @@ namespace SteamMoverWPF
 
                 }
             }
+            //Sort list
+            Game game = new Game();
+            //  get property descriptions
+            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(game);
+            //  get specific descriptor
+            PropertyDescriptor property = properties.Find("GameName", false);
+            foreach (Library library in libraryList)
+            {
+                library.GamesList.SortMyList(property, ListSortDirection.Ascending);
+            }
             BindingDataContext.Instance.LibraryList = libraryList;
         }
     }
