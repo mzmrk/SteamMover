@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CustomControls\DataGridExt.cs" />
     <Compile Include="Entities\BindingDataContext.cs" />
     <Compile Include="Entities\Game.cs" />
     <Compile Include="Entities\Library.cs" />

@@ -1,4 +1,5 @@
 ﻿using SteamMoverWPF.Entities;
+using SteamMoverWPF.Util;
 using SteamMoverWPF.Utility;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace SteamMoverWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+
         Library comboBoxLeftSelectedItem;
         Library comboBoxRightSelectedItem;
 
@@ -87,10 +89,6 @@ namespace SteamMoverWPF
         public void WorkThreadRealSizeOnDisk()
         {
             blockMainThread.Reset();
-            //TODO: Clone lists of lists except for game objects -- they need to keep reference. Do it to make those loops sorting resistant!
-            //Library library1 = new Library();
-            //library1.
-            //List<Library> lista = ((List<Library>)(BindingDataContext.Instance.LibraryList)).ConvertAll(item => (Library)item.Clone()).ToList()
             foreach (Library library in BindingDataContext.Instance.LibraryList)
             {
                 foreach (Game game in library.GamesList)
@@ -287,6 +285,12 @@ namespace SteamMoverWPF
         private void button1_Click(object sender, RoutedEventArgs e)
         {
             LibraryManager.removeLibrary((Library)comboBoxRight.SelectedItem);
+        }
+
+        private void dataGrid_Sorted(object sender, ValueEventArgs<DataGridColumn> e)
+        {
+            cancelRealSizeOnDiskTask();
+            startRealSizeOnDiskTask();
         }
     }
 }
