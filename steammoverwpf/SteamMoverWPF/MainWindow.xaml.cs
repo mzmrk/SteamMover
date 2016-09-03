@@ -30,7 +30,7 @@ namespace SteamMoverWPF
         private int taskRestartRequestedLock = 0;
         private volatile bool taskRestartRequested = false;
         int lastFinishedGameAppID = 0;
-        double lastFinishedRealSizeOnDisk = 0;
+        long lastFinishedRealSizeOnDisk = 0;
         ManualResetEvent blockMainThread = new ManualResetEvent(false);
 
 
@@ -60,10 +60,10 @@ namespace SteamMoverWPF
                 library.GamesList.SortMyList(property, ListSortDirection.Ascending);
                 library.GamesList.ListChanged += GamesList_ListChanged;
             }
-
             SortDescription sortDescription = new SortDescription("GameName", ListSortDirection.Ascending);
             dataGridLeft.Items.SortDescriptions.Add(sortDescription);
             dataGridRight.Items.SortDescriptions.Add(sortDescription);
+
             startRealSizeOnDiskTask();
             
         }
@@ -137,7 +137,7 @@ namespace SteamMoverWPF
                     if (!game.RealSizeOnDisk_isChecked)
                     {
                         blockMainThread.Set();
-                        double realSizeOnDisk = UtilityBox.GetWSHFolderSize(library.SteamAppsDirectory + "\\common\\" + game.GameDirectory);
+                        long realSizeOnDisk = (long)UtilityBox.GetWSHFolderSize(library.SteamAppsDirectory + "\\common\\" + game.GameDirectory);
                         if (RealSizeOnDiskCT.IsCancellationRequested)
                         {
                             lastFinishedGameAppID = game.AppID;
@@ -187,8 +187,6 @@ namespace SteamMoverWPF
             if (comboBoxLeft.SelectedIndex != -1)
             {
                 BindingDataContext.Instance.GamesLeft = ((Library)comboBoxLeft.SelectedItem).GamesList;
-                dataGridLeft.Items.SortDescriptions.Clear();
-                dataGridLeft.Items.SortDescriptions.Add(new SortDescription("GameName", ListSortDirection.Ascending));
                 comboBoxLeftSelectedItem = (Library)comboBoxLeft.SelectedItem;
             } else
             {
@@ -213,8 +211,6 @@ namespace SteamMoverWPF
             if (comboBoxRight.SelectedIndex != -1)
             {
                 BindingDataContext.Instance.GamesRight = ((Library)comboBoxRight.SelectedItem).GamesList;
-                dataGridRight.Items.SortDescriptions.Clear();
-                dataGridRight.Items.SortDescriptions.Add(new SortDescription("GameName", ListSortDirection.Ascending));
                 comboBoxRightSelectedItem = (Library)comboBoxRight.SelectedItem;
             }
             else
@@ -258,8 +254,6 @@ namespace SteamMoverWPF
                 }
                 destination.GamesList.Add((Game)dataGridLeft.SelectedItem);
                 source.GamesList.Remove((Game)dataGridLeft.SelectedItem);
-                dataGridRight.Items.SortDescriptions.Clear();
-                dataGridRight.Items.SortDescriptions.Add(new SortDescription("GameName", ListSortDirection.Ascending));
 
                 startRealSizeOnDiskTask();
             }
@@ -292,8 +286,6 @@ namespace SteamMoverWPF
                 }
                 destination.GamesList.Add((Game)dataGridRight.SelectedItem);
                 source.GamesList.Remove((Game)dataGridRight.SelectedItem);
-                dataGridLeft.Items.SortDescriptions.Clear();
-                dataGridLeft.Items.SortDescriptions.Add(new SortDescription("GameName", ListSortDirection.Ascending));
 
                 startRealSizeOnDiskTask();
             }

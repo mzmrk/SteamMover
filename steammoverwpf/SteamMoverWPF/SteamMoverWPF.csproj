@@ -59,7 +59,7 @@
     <Compile Include="Entities\Game.cs" />
     <Compile Include="Entities\Library.cs" />
     <Compile Include="Utility\InteropSHFileOperation.cs" />
-    <Compile Include="Utility\NaturalComparer.cs" />
+    <Compile Include="SteamManagement\LibraryManager.cs" />
     <Compile Include="Utility\SortableBindingList.cs" />
     <Compile Include="SteamManagement\SteamConfigFileReader.cs" />
     <Compile Include="SteamManagement\SteamConfigFileWriter.cs" />
@@ -73,7 +73,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SteamManagement\LibraryDetector.cs" />
-    <Compile Include="SteamManagement\LibraryManager.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

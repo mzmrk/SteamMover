@@ -1,7 +1,8 @@
-﻿using System;
+﻿using SteamMoverWPF.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
- 
+
 namespace SteamMoverWPF.Util
 {
     /// <summary>
@@ -15,7 +16,7 @@ namespace SteamMoverWPF.Util
         private bool _isSorted;
         private ListSortDirection _sortDirection = ListSortDirection.Ascending;
         private PropertyDescriptor _sortProperty;
- 
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SortableBindingList{T}"/> class.
         /// </summary>
@@ -87,12 +88,22 @@ namespace SteamMoverWPF.Util
         {
             _sortProperty = prop;
             _sortDirection = direction;
+
+            if (_sortProperty.Name == "RealSizeOnDiskString")
+            {
+                Game game = new Game();
+                //  get property descriptions
+                PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(game);
+                //  get specific descriptor
+                PropertyDescriptor property = properties.Find("RealSizeOnDiskChecked", false);
+                _sortProperty = property;
+            }
  
             List<T> list = Items as List<T>;
             if (list == null) return;
- 
+
             list.Sort(Compare);
- 
+
             _isSorted = true;
             //fire an event that the list has been changed.
             OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
