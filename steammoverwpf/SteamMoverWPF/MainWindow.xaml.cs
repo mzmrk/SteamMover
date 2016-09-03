@@ -1,16 +1,12 @@
 ﻿using SteamMoverWPF.Entities;
-using SteamMoverWPF.Util;
 using SteamMoverWPF.Utility;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace SteamMoverWPF
 {
@@ -317,9 +313,14 @@ namespace SteamMoverWPF
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            cancelRealSizeOnDiskTask();
-            LibraryManager.removeLibrary((Library)comboBoxRight.SelectedItem);
-            startRealSizeOnDiskTask();
+            
+            if (comboBoxRight.SelectedIndex > 0)
+            {
+                cancelRealSizeOnDiskTask();
+                LibraryManager.removeLibrary((Library)comboBoxRight.SelectedItem);
+                startRealSizeOnDiskTask();
+            }
+
         }
     }
 }
