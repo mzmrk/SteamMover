@@ -35,9 +35,8 @@ namespace SteamMoverWPF
         }
         private static BindingList<Library> detectSteamLibraries(string steamPath, BindingList<Library> libraryList)
         {
-            SteamConfigFileReader vfr = new SteamConfigFileReader();
-            vfr.readSteamConfigFile(steamPath + "\\steamapps\\libraryfolders.vdf");
-            if (vfr.configType != "LibraryFolders")
+            SteamConfigFile steamConfigFile = SteamConfigFileReader.readFile(steamPath + "\\steamapps\\libraryfolders.vdf");
+            if (steamConfigFile.configType != "LibraryFolders")
             {
                 //TODO: Implement error handling.
                 throw new Exception("libraryfolder.vdf has wrong format.");
@@ -45,19 +44,19 @@ namespace SteamMoverWPF
             Library library = new Library();
             library.LibraryDirectory = steamPath;
             libraryList.Add(library);
-            foreach (SteamConfigFileProperty vfi in vfr.steamConfigFilePropertyList)
+            foreach (SteamConfigFileProperty steamConfigFileProperty in steamConfigFile.steamConfigFilePropertyList)
             {
-                if (vfi.name.Equals("TimeNextStatsReport") || vfi.name.Equals("ContentStatsID"))
+                if (steamConfigFileProperty.Name.Equals("TimeNextStatsReport") || steamConfigFileProperty.Name.Equals("ContentStatsID"))
                 {
                     continue;
                 }
                 //TODO: Temporary workarround for not existing library folders. In the future add possibility to manage library folders list directly in the tool.
-                if (!Directory.Exists(vfi.value + "\\SteamApps"))
+                if (!Directory.Exists(steamConfigFileProperty.Value + "\\SteamApps"))
                 {
                     continue;
                 }
                 library = new Library(); 
-                library.LibraryDirectory = vfi.value;
+                library.LibraryDirectory = steamConfigFileProperty.Value;
                 libraryList.Add(library);
             }
             return libraryList;
@@ -68,30 +67,29 @@ namespace SteamMoverWPF
             SortableBindingList<Game> gamesList = new SortableBindingList<Game>();
             foreach (string file in filePaths)
             {
-                SteamConfigFileReader vfr = new SteamConfigFileReader();
-                vfr.readSteamConfigFile(file);
-                if (vfr.configType != "AppState")
+                SteamConfigFile steamConfigFile = SteamConfigFileReader.readFile(file);
+                if (steamConfigFile.configType != "AppState")
                 {
                     return null;
                 }
                 Game game = new Game();
-                foreach (SteamConfigFileProperty vfi in vfr.steamConfigFilePropertyList)
+                foreach (SteamConfigFileProperty steamConfigFileProperty in steamConfigFile.steamConfigFilePropertyList)
                 {
-                    if (vfi.name.Equals("appID"))
+                    if (steamConfigFileProperty.Name.Equals("appID"))
                     {
-                        game.AppID = Convert.ToInt32(vfi.value);
+                        game.AppID = Convert.ToInt32(steamConfigFileProperty.Value);
                     }
-                    else if (vfi.name.Equals("name"))
+                    else if (steamConfigFileProperty.Name.Equals("name"))
                     {
-                        game.GameName = vfi.value;
+                        game.GameName = steamConfigFileProperty.Value;
                     }
-                    else if (vfi.name.Equals("installdir"))
+                    else if (steamConfigFileProperty.Name.Equals("installdir"))
                     {
-                        game.GameDirectory = vfi.value;
+                        game.GameDirectory = steamConfigFileProperty.Value;
                     }
-                    else if (vfi.name.Equals("SizeOnDisk"))
+                    else if (steamConfigFileProperty.Name.Equals("SizeOnDisk"))
                     {
-                        game.SizeOnDisk = Convert.ToInt64(vfi.value);
+                        game.SizeOnDisk = Convert.ToInt64(steamConfigFileProperty.Value);
                     }
                 }
                 //game.realSizeOnDisk = GetWSHFolderSize(library.libraryDirectory + "\\common\\" + game.gameDirectory);

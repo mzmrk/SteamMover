@@ -5,20 +5,23 @@ namespace SteamMoverWPF
 {
     class SteamConfigFileProperty
     {
-        public string name;
-        public string value;
+        public string Name;
+        public string Value;
     }
-    class SteamConfigFileReader
+    class SteamConfigFile
     {
         public string configType;
         public List<SteamConfigFileProperty> steamConfigFilePropertyList = new List<SteamConfigFileProperty>();
-
-        public void readSteamConfigFile(string steamPath)
+    }
+    static class SteamConfigFileReader
+    {
+        public static SteamConfigFile readFile(string steamPath)
         {
+            SteamConfigFile steamConfigFile = new SteamConfigFile();
             string line;
             System.IO.StreamReader streamReader = new System.IO.StreamReader(steamPath);
             // "LibraryFolders"
-            configType = UtilityBox.GetSubstringByString('"', '"', streamReader.ReadLine());
+            steamConfigFile.configType = UtilityBox.GetSubstringByString('"', '"', streamReader.ReadLine());
             //{
             /*
             "appID"		"33900"
@@ -36,14 +39,14 @@ namespace SteamMoverWPF
                 }
                 line = line.Replace("\\\\", "\\");
                 SteamConfigFileProperty steamConfigFileProperty = new SteamConfigFileProperty();
-                steamConfigFileProperty.name = UtilityBox.GetSubstringByString('"', '"', line);
+                steamConfigFileProperty.Name = UtilityBox.GetSubstringByString('"', '"', line);
                 line = line.Substring(line.IndexOf('"') + 1);
                 line = line.Substring(line.IndexOf('"') + 1);
-                steamConfigFileProperty.value = UtilityBox.GetSubstringByString('"', '"', line);
-                steamConfigFilePropertyList.Add(steamConfigFileProperty);
+                steamConfigFileProperty.Value = UtilityBox.GetSubstringByString('"', '"', line);
+                steamConfigFile.steamConfigFilePropertyList.Add(steamConfigFileProperty);
             }
-
             streamReader.Close();
+            return steamConfigFile;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace SteamMoverWPF.Utility
@@ -31,6 +32,14 @@ namespace SteamMoverWPF.Utility
             }
             Marshal.FinalReleaseComObject(FSO);
             return FldrSize;
+        }
+        public static bool isSteamRunning()
+        {
+            if (Process.GetProcessesByName("Steam").Length > 0)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
