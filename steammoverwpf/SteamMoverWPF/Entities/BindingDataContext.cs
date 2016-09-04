@@ -1,13 +1,11 @@
-﻿using SteamMoverWPF.Entities;
-using SteamMoverWPF.Util;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using SteamMoverWPF.Utility;
 
-namespace SteamMoverWPF
+namespace SteamMoverWPF.Entities
 {
     public sealed class BindingDataContext : INotifyPropertyChanged
     {
         #region Singleton Stuff
-        private static readonly BindingDataContext instance = new BindingDataContext();
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -20,46 +18,40 @@ namespace SteamMoverWPF
             LibraryList = new BindingList<Library>();
         }
 
-        public static BindingDataContext Instance
-        {
-            get
-            {
-                return instance;
-            }
-        }
+        public static BindingDataContext Instance { get; } = new BindingDataContext();
+
         #endregion
 
-        private string steamPath;
+        private string _steamPath;
         public string SteamPath
         {
-            get { return steamPath; }
-            set { steamPath = value; OnPropertyChanged("SteamPath"); }
+            get { return _steamPath; }
+            set { _steamPath = value; OnPropertyChanged("SteamPath"); }
         }
-        private SortableBindingList<Game> gamesLeft;
+        private SortableBindingList<Game> _gamesLeft;
         public SortableBindingList<Game> GamesLeft
         {
-            get { return gamesLeft; }
-            set { gamesLeft = value; OnPropertyChanged("GamesLeft"); }
+            get { return _gamesLeft; }
+            set { _gamesLeft = value; OnPropertyChanged("GamesLeft"); }
         }
-        private SortableBindingList<Game> gamesRight;
+        private SortableBindingList<Game> _gamesRight;
         public SortableBindingList<Game> GamesRight
         {
-            get { return gamesRight; }
-            set { gamesRight = value; OnPropertyChanged("GamesRight"); }
+            get { return _gamesRight; }
+            set { _gamesRight = value; OnPropertyChanged("GamesRight"); }
         }
-        private BindingList<Library> libraryList;
+        private BindingList<Library> _libraryList;
         public BindingList<Library> LibraryList
         {
-            get { return libraryList; }
-            set { libraryList = value; OnPropertyChanged("LibraryList"); }
+            get { return _libraryList; }
+            set { _libraryList = value; OnPropertyChanged("LibraryList"); }
         }
 
         #region OnPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
         {
-            var handler = this.PropertyChanged;
-            if (handler != null) this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
     }

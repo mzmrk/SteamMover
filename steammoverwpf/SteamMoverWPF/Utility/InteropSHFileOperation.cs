@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace SteamMoverWPF
+namespace SteamMoverWPF.Utility
 {
     // SOURCE: http://www.pinvoke.net/default.aspx/shell32.shfileoperation
-    public class InteropSHFileOperation
+    public class InteropShFileOperation
     {
-        public enum FO_Func : uint
+        public enum FoFunc : uint
         {
-            FO_MOVE = 0x0001,
-            FO_COPY = 0x0002,
-            FO_DELETE = 0x0003,
-            FO_RENAME = 0x0004,
+            FoMove = 0x0001,
+            FoCopy = 0x0002,
+            FoDelete = 0x0003,
+            FoRename = 0x0004,
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 2)]
-        struct SHFILEOPSTRUCT
+        private struct Shfileopstruct
         {
             public IntPtr hwnd;
-            public FO_Func wFunc;
+            public FoFunc wFunc;
             [MarshalAs(UnmanagedType.LPWStr)]
             public string pFrom;
             [MarshalAs(UnmanagedType.LPWStr)]
@@ -33,165 +33,165 @@ namespace SteamMoverWPF
         }
 
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-        static extern int SHFileOperation([In, Out] ref SHFILEOPSTRUCT lpFileOp);
+        private static extern int SHFileOperation([In, Out] ref Shfileopstruct lpFileOp);
 
-        private SHFILEOPSTRUCT _ShFile;
-        public FILEOP_FLAGS fFlags;
+        private Shfileopstruct _shFile;
+        public FileopFlags FFlags;
 
-        public IntPtr hwnd
+        public IntPtr Hwnd
         {
             set
             {
-                this._ShFile.hwnd = value;
+                this._shFile.hwnd = value;
             }
         }
-        public FO_Func wFunc
+        public FoFunc WFunc
         {
             set
             {
-                this._ShFile.wFunc = value;
-            }
-        }
-
-        public string pFrom
-        {
-            set
-            {
-                this._ShFile.pFrom = value + '\0' + '\0';
-            }
-        }
-        public string pTo
-        {
-            set
-            {
-                this._ShFile.pTo = value + '\0' + '\0';
+                this._shFile.wFunc = value;
             }
         }
 
-        public bool fAnyOperationsAborted
+        public string PFrom
         {
             set
             {
-                this._ShFile.fAnyOperationsAborted = value;
+                this._shFile.pFrom = value + '\0' + '\0';
             }
         }
-        public IntPtr hNameMappings
+        public string PTo
         {
             set
             {
-                this._ShFile.hNameMappings = value;
-            }
-        }
-        public string lpszProgressTitle
-        {
-            set
-            {
-                this._ShFile.lpszProgressTitle = value + '\0';
+                this._shFile.pTo = value + '\0' + '\0';
             }
         }
 
-        public InteropSHFileOperation()
+        public bool FAnyOperationsAborted
+        {
+            set
+            {
+                this._shFile.fAnyOperationsAborted = value;
+            }
+        }
+        public IntPtr HNameMappings
+        {
+            set
+            {
+                this._shFile.hNameMappings = value;
+            }
+        }
+        public string LpszProgressTitle
+        {
+            set
+            {
+                this._shFile.lpszProgressTitle = value + '\0';
+            }
+        }
+
+        public InteropShFileOperation()
         {
 
-            this.fFlags = new FILEOP_FLAGS();
-            this._ShFile = new SHFILEOPSTRUCT();
-            this._ShFile.hwnd = IntPtr.Zero;
-            this._ShFile.wFunc = FO_Func.FO_COPY;
-            this._ShFile.pFrom = "";
-            this._ShFile.pTo = "";
-            this._ShFile.fAnyOperationsAborted = false;
-            this._ShFile.hNameMappings = IntPtr.Zero;
-            this._ShFile.lpszProgressTitle = "";
+            this.FFlags = new FileopFlags();
+            this._shFile = new Shfileopstruct();
+            this._shFile.hwnd = IntPtr.Zero;
+            this._shFile.wFunc = FoFunc.FoCopy;
+            this._shFile.pFrom = "";
+            this._shFile.pTo = "";
+            this._shFile.fAnyOperationsAborted = false;
+            this._shFile.hNameMappings = IntPtr.Zero;
+            this._shFile.lpszProgressTitle = "";
 
         }
 
         public bool Execute()
         {
-            this._ShFile.fFlags = this.fFlags.Flag;
-            return SHFileOperation(ref this._ShFile) == 0;//true if no errors
+            this._shFile.fFlags = this.FFlags.Flag;
+            return SHFileOperation(ref this._shFile) == 0;//true if no errors
         }
 
-        public class FILEOP_FLAGS
+        public class FileopFlags
         {
             [Flags]
-            private enum FILEOP_FLAGS_ENUM : ushort
+            private enum FileopFlagsEnum : ushort
             {
-                FOF_MULTIDESTFILES = 0x0001,
-                FOF_CONFIRMMOUSE = 0x0002,
-                FOF_SILENT = 0x0004,  // don't create progress/report
-                FOF_RENAMEONCOLLISION = 0x0008,
-                FOF_NOCONFIRMATION = 0x0010,  // Don't prompt the user.
-                FOF_WANTMAPPINGHANDLE = 0x0020,  // Fill in SHFILEOPSTRUCT.hNameMappings
+                FofMultidestfiles = 0x0001,
+                FofConfirmmouse = 0x0002,
+                FofSilent = 0x0004,  // don't create progress/report
+                FofRenameoncollision = 0x0008,
+                FofNoconfirmation = 0x0010,  // Don't prompt the user.
+                FofWantmappinghandle = 0x0020,  // Fill in SHFILEOPSTRUCT.hNameMappings
                 // Must be freed using SHFreeNameMappings
-                FOF_ALLOWUNDO = 0x0040,
-                FOF_FILESONLY = 0x0080,  // on *.*, do only files
-                FOF_SIMPLEPROGRESS = 0x0100,  // means don't show names of files
-                FOF_NOCONFIRMMKDIR = 0x0200,  // don't confirm making any needed dirs
-                FOF_NOERRORUI = 0x0400,  // don't put up error UI
-                FOF_NOCOPYSECURITYATTRIBS = 0x0800,  // dont copy NT file Security Attributes
-                FOF_NORECURSION = 0x1000,  // don't recurse into directories.
-                FOF_NO_CONNECTED_ELEMENTS = 0x2000,  // don't operate on connected elements.
-                FOF_WANTNUKEWARNING = 0x4000,  // during delete operation, warn if nuking instead of recycling (partially overrides FOF_NOCONFIRMATION)
-                FOF_NORECURSEREPARSE = 0x8000,  // treat reparse points as objects, not containers
+                FofAllowundo = 0x0040,
+                FofFilesonly = 0x0080,  // on *.*, do only files
+                FofSimpleprogress = 0x0100,  // means don't show names of files
+                FofNoconfirmmkdir = 0x0200,  // don't confirm making any needed dirs
+                FofNoerrorui = 0x0400,  // don't put up error UI
+                FofNocopysecurityattribs = 0x0800,  // dont copy NT file Security Attributes
+                FofNorecursion = 0x1000,  // don't recurse into directories.
+                FofNoConnectedElements = 0x2000,  // don't operate on connected elements.
+                FofWantnukewarning = 0x4000,  // during delete operation, warn if nuking instead of recycling (partially overrides FOF_NOCONFIRMATION)
+                FofNorecursereparse = 0x8000,  // treat reparse points as objects, not containers
             }
 
-            public bool FOF_MULTIDESTFILES = false;
-            public bool FOF_CONFIRMMOUSE = false;
-            public bool FOF_SILENT = false;
-            public bool FOF_RENAMEONCOLLISION = false;
-            public bool FOF_NOCONFIRMATION = false;
-            public bool FOF_WANTMAPPINGHANDLE = false;
-            public bool FOF_ALLOWUNDO = false;
-            public bool FOF_FILESONLY = false;
-            public bool FOF_SIMPLEPROGRESS = false;
-            public bool FOF_NOCONFIRMMKDIR = false;
-            public bool FOF_NOERRORUI = false;
-            public bool FOF_NOCOPYSECURITYATTRIBS = false;
-            public bool FOF_NORECURSION = false;
-            public bool FOF_NO_CONNECTED_ELEMENTS = false;
-            public bool FOF_WANTNUKEWARNING = false;
-            public bool FOF_NORECURSEREPARSE = false;
+            public bool FofMultidestfiles = false;
+            public bool FofConfirmmouse = false;
+            public bool FofSilent = false;
+            public bool FofRenameoncollision = false;
+            public bool FofNoconfirmation = false;
+            public bool FofWantmappinghandle = false;
+            public bool FofAllowundo = false;
+            public bool FofFilesonly = false;
+            public bool FofSimpleprogress = false;
+            public bool FofNoconfirmmkdir = false;
+            public bool FofNoerrorui = false;
+            public bool FofNocopysecurityattribs = false;
+            public bool FofNorecursion = false;
+            public bool FofNoConnectedElements = false;
+            public bool FofWantnukewarning = false;
+            public bool FofNorecursereparse = false;
 
             public ushort Flag
             {
                 get
                 {
-                    ushort ReturnValue = 0;
+                    ushort returnValue = 0;
 
-                    if (this.FOF_MULTIDESTFILES)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_MULTIDESTFILES;
-                    if (this.FOF_CONFIRMMOUSE)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_CONFIRMMOUSE;
-                    if (this.FOF_SILENT)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_SILENT;
-                    if (this.FOF_RENAMEONCOLLISION)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_RENAMEONCOLLISION;
-                    if (this.FOF_NOCONFIRMATION)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCONFIRMATION;
-                    if (this.FOF_WANTMAPPINGHANDLE)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_WANTMAPPINGHANDLE;
-                    if (this.FOF_ALLOWUNDO)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_ALLOWUNDO;
-                    if (this.FOF_FILESONLY)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_FILESONLY;
-                    if (this.FOF_SIMPLEPROGRESS)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_SIMPLEPROGRESS;
-                    if (this.FOF_NOCONFIRMMKDIR)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCONFIRMMKDIR;
-                    if (this.FOF_NOERRORUI)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOERRORUI;
-                    if (this.FOF_NOCOPYSECURITYATTRIBS)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCOPYSECURITYATTRIBS;
-                    if (this.FOF_NORECURSION)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NORECURSION;
-                    if (this.FOF_NO_CONNECTED_ELEMENTS)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NO_CONNECTED_ELEMENTS;
-                    if (this.FOF_WANTNUKEWARNING)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_WANTNUKEWARNING;
-                    if (this.FOF_NORECURSEREPARSE)
-                        ReturnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NORECURSEREPARSE;
+                    if (this.FofMultidestfiles)
+                        returnValue |= (ushort)FileopFlagsEnum.FofMultidestfiles;
+                    if (this.FofConfirmmouse)
+                        returnValue |= (ushort)FileopFlagsEnum.FofConfirmmouse;
+                    if (this.FofSilent)
+                        returnValue |= (ushort)FileopFlagsEnum.FofSilent;
+                    if (this.FofRenameoncollision)
+                        returnValue |= (ushort)FileopFlagsEnum.FofRenameoncollision;
+                    if (this.FofNoconfirmation)
+                        returnValue |= (ushort)FileopFlagsEnum.FofNoconfirmation;
+                    if (this.FofWantmappinghandle)
+                        returnValue |= (ushort)FileopFlagsEnum.FofWantmappinghandle;
+                    if (this.FofAllowundo)
+                        returnValue |= (ushort)FileopFlagsEnum.FofAllowundo;
+                    if (this.FofFilesonly)
+                        returnValue |= (ushort)FileopFlagsEnum.FofFilesonly;
+                    if (this.FofSimpleprogress)
+                        returnValue |= (ushort)FileopFlagsEnum.FofSimpleprogress;
+                    if (this.FofNoconfirmmkdir)
+                        returnValue |= (ushort)FileopFlagsEnum.FofNoconfirmmkdir;
+                    if (this.FofNoerrorui)
+                        returnValue |= (ushort)FileopFlagsEnum.FofNoerrorui;
+                    if (this.FofNocopysecurityattribs)
+                        returnValue |= (ushort)FileopFlagsEnum.FofNocopysecurityattribs;
+                    if (this.FofNorecursion)
+                        returnValue |= (ushort)FileopFlagsEnum.FofNorecursion;
+                    if (this.FofNoConnectedElements)
+                        returnValue |= (ushort)FileopFlagsEnum.FofNoConnectedElements;
+                    if (this.FofWantnukewarning)
+                        returnValue |= (ushort)FileopFlagsEnum.FofWantnukewarning;
+                    if (this.FofNorecursereparse)
+                        returnValue |= (ushort)FileopFlagsEnum.FofNorecursereparse;
 
-                    return ReturnValue;
+                    return returnValue;
                 }
             }
         }

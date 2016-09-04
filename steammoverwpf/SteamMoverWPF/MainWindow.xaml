@@ -20,23 +20,23 @@
             <ColumnDefinition Width="184*"/>
             <ColumnDefinition Width="27*"/>
         </Grid.ColumnDefinitions>
-        <ComboBox ItemsSource="{Binding LibraryList, Mode=OneWay}" DisplayMemberPath="LibraryDirectory" x:Name="comboBoxLeft" HorizontalAlignment="Left" Margin="21,70,0,0" VerticalAlignment="Top" Width="326" SelectionChanged="comboBoxLeft_SelectedIndexChanged"/>
-        <ComboBox ItemsSource="{Binding LibraryList, Mode=OneWay}" DisplayMemberPath="LibraryDirectory" x:Name="comboBoxRight" HorizontalAlignment="Left" Margin="474,70,0,0" VerticalAlignment="Top" Width="350" SelectionChanged="comboBoxRight_SelectedIndexChanged" Grid.ColumnSpan="2"/>
-        <DataGrid  ItemsSource="{Binding GamesLeft, Mode=OneWay}" x:Name="dataGridLeft" HorizontalAlignment="Left" Margin="21,130,0,0" VerticalAlignment="Top" Height="372" Width="326" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True">
+        <ComboBox ItemsSource="{Binding LibraryList, Mode=OneWay}" DisplayMemberPath="LibraryDirectory" x:Name="ComboBoxLeft" HorizontalAlignment="Left" Margin="21,70,0,0" VerticalAlignment="Top" Width="326" SelectionChanged="comboBoxLeft_SelectedIndexChanged"/>
+        <ComboBox ItemsSource="{Binding LibraryList, Mode=OneWay}" DisplayMemberPath="LibraryDirectory" x:Name="ComboBoxRight" HorizontalAlignment="Left" Margin="474,70,0,0" VerticalAlignment="Top" Width="350" SelectionChanged="comboBoxRight_SelectedIndexChanged" Grid.ColumnSpan="2"/>
+        <DataGrid  ItemsSource="{Binding GamesLeft, Mode=OneWay}" x:Name="DataGridLeft" HorizontalAlignment="Left" Margin="21,130,0,0" VerticalAlignment="Top" Height="372" Width="326" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Game name" Binding="{Binding GameName}" SortMemberPath="GameName" Width="*" />
                 <DataGridTextColumn Header="Size on disk" Binding="{Binding RealSizeOnDiskString}" CellStyle="{StaticResource ActiveCellStyle}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid ItemsSource="{Binding GamesRight, Mode=OneWay}" x:Name="dataGridRight" HorizontalAlignment="Left" Margin="474,130,0,0" VerticalAlignment="Top" Height="372" Width="360"  AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True" Grid.ColumnSpan="2">
+        <DataGrid ItemsSource="{Binding GamesRight, Mode=OneWay}" x:Name="DataGridRight" HorizontalAlignment="Left" Margin="474,130,0,0" VerticalAlignment="Top" Height="372" Width="360"  AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True" Grid.ColumnSpan="2">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Game name" Binding="{Binding GameName}" Width="*" />
                 <DataGridTextColumn Header="Size on disk" Binding="{Binding RealSizeOnDiskString}" CellStyle="{StaticResource ActiveCellStyle}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="buttonRight" Content="-&gt;" HorizontalAlignment="Left" Margin="379,234,0,0" VerticalAlignment="Top" Width="75" Click="buttonRight_Click_1"/>
-        <Button x:Name="buttonLeft" Content="&lt;-" HorizontalAlignment="Left" Margin="379,335,0,0" VerticalAlignment="Top" Width="75" Click="buttonLeft_Click_1"/>
-        <Menu x:Name="menu" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="338">
+        <Button x:Name="ButtonRight" Content="-&gt;" HorizontalAlignment="Left" Margin="379,234,0,0" VerticalAlignment="Top" Width="75" Click="buttonRight_Click_1"/>
+        <Button x:Name="ButtonLeft" Content="&lt;-" HorizontalAlignment="Left" Margin="379,335,0,0" VerticalAlignment="Top" Width="75" Click="buttonLeft_Click_1"/>
+        <Menu x:Name="Menu" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="338">
             <MenuItem Header="File">
                 <MenuItem Header="MenuItem" HorizontalAlignment="Left" Width="140"/>
                 <MenuItem Header="MenuItem" HorizontalAlignment="Left" Width="140"/>
@@ -48,8 +48,8 @@
             <MenuItem Header="Help"/>
             <MenuItem Header="Help"/>
         </Menu>
-        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="152,602,0,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
-        <Label  x:Name="label" Content="{Binding SteamPath, Mode=OneWay}" HorizontalAlignment="Left" Margin="10,28,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="button1" Content="Remove" Grid.Column="1" HorizontalAlignment="Left" Margin="40,70,0,0" VerticalAlignment="Top" Width="75" Click="button1_Click"/>
+        <Button x:Name="Button" Content="Button" HorizontalAlignment="Left" Margin="152,602,0,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
+        <Label  x:Name="Label" Content="{Binding SteamPath, Mode=OneWay}" HorizontalAlignment="Left" Margin="10,28,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="Button1" Content="Remove" Grid.Column="1" HorizontalAlignment="Left" Margin="40,70,0,0" VerticalAlignment="Top" Width="75" Click="button1_Click"/>
     </Grid>
 </Window>

@@ -5,81 +5,77 @@ namespace SteamMoverWPF.Entities
 {
     public class Game : INotifyPropertyChanged
     {
-        private int appID;
-        public int AppID
+        private int _appId;
+        public int AppId
         {
-            get { return appID; }
-            set { appID = value; OnPropertyChanged("AppID"); }
+            get { return _appId; }
+            set { _appId = value; OnPropertyChanged("AppID"); }
         }
-        private string gameName;
+        private string _gameName;
         public string GameName
         {
-            get { return gameName; }
-            set { gameName = value; OnPropertyChanged("GameName"); }
+            get { return _gameName; }
+            set { _gameName = value; OnPropertyChanged("GameName"); }
         }
-        private string gameDirectory;
+        private string _gameDirectory;
         public string GameDirectory
         {
-            get { return gameDirectory; }
-            set { gameDirectory = value; OnPropertyChanged("GameDirectory"); }
+            get { return _gameDirectory; }
+            set { _gameDirectory = value; OnPropertyChanged("GameDirectory"); }
         }
-        private long sizeOnDisk;
+        private long _sizeOnDisk;
         public long SizeOnDisk
         {
-            get { return sizeOnDisk; }
-            set { sizeOnDisk = value; OnPropertyChanged("SizeOnDisk"); OnPropertyChanged("RealSizeOnDiskString"); OnPropertyChanged("RealSizeOnDiskChecked"); }
+            get { return _sizeOnDisk; }
+            set { _sizeOnDisk = value; OnPropertyChanged("SizeOnDisk"); OnPropertyChanged("RealSizeOnDiskString"); OnPropertyChanged("RealSizeOnDiskChecked"); }
         }
-        private long realSizeOnDisk;
+        private long _realSizeOnDisk;
         public long RealSizeOnDisk
         {
-            get { return realSizeOnDisk; }
-            set { realSizeOnDisk = value; OnPropertyChanged("RealSizeOnDisk"); OnPropertyChanged("RealSizeOnDiskString"); OnPropertyChanged("RealSizeOnDiskChecked"); }
+            get { return _realSizeOnDisk; }
+            set { _realSizeOnDisk = value; OnPropertyChanged("RealSizeOnDisk"); OnPropertyChanged("RealSizeOnDiskString"); OnPropertyChanged("RealSizeOnDiskChecked"); }
         }
 
         public long RealSizeOnDiskChecked
         {
             get
             {
-                if (realSizeOnDisk_isChecked)
+                if (_realSizeOnDiskIsChecked)
                 {
-                    return realSizeOnDisk;
+                    return _realSizeOnDisk;
                 }
                 else
                 {
-                    return sizeOnDisk;
+                    return _sizeOnDisk;
                 }
             }
-            set { }
         }
 
         public string RealSizeOnDiskString
         {
             get
             {
-                if (realSizeOnDisk_isChecked)
+                if (_realSizeOnDiskIsChecked)
                 {
-                    return ((double)realSizeOnDisk / 1024 / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture) + " GB";
+                    return ((double)_realSizeOnDisk / 1024 / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture) + " GB";
                 } else
                 {
-                    return ((double)sizeOnDisk / 1024 / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture) + " GB";
+                    return ((double)_sizeOnDisk / 1024 / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture) + " GB";
                 }
             }
-            set {  }
         }
-        private bool realSizeOnDisk_isChecked;
-        public bool RealSizeOnDisk_isChecked
+        private bool _realSizeOnDiskIsChecked;
+        public bool RealSizeOnDiskIsChecked
         {
-            get { return realSizeOnDisk_isChecked; }
-            set { realSizeOnDisk_isChecked = value; OnPropertyChanged("RealSizeOnDisk_isChecked"); }
+            get { return _realSizeOnDiskIsChecked; }
+            set { _realSizeOnDiskIsChecked = value; OnPropertyChanged("RealSizeOnDisk_isChecked"); }
         }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
         {
-            var handler = this.PropertyChanged;
-            if (handler != null) this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
     }
 }
