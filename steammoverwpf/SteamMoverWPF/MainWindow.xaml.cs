@@ -1,39 +1,35 @@
 ﻿using SteamMoverWPF.Entities;
 using SteamMoverWPF.Tasks;
-using SteamMoverWPF.Utility;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using SteamMoverWPF.SteamManagement;
 
 namespace SteamMoverWPF
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
+        private Library _comboBoxLeftSelectedItem;
+        private Library _comboBoxRightSelectedItem;
 
-        Library comboBoxLeftSelectedItem;
-        Library comboBoxRightSelectedItem;
-
-
-        public void init()
+        public void Init()
         {
-            LibraryDetector.run();
+            LibraryDetector.Run();
             this.DataContext = BindingDataContext.Instance;
 
             if (BindingDataContext.Instance.LibraryList.Count == 1)
             {
-                comboBoxLeft.SelectedIndex = 0;
+                ComboBoxLeft.SelectedIndex = 0;
             }
             else if (BindingDataContext.Instance.LibraryList.Count > 1)
             {
-                comboBoxLeft.SelectedIndex = 0;
-                comboBoxRight.SelectedIndex = 1;
+                ComboBoxLeft.SelectedIndex = 0;
+                ComboBoxRight.SelectedIndex = 1;
             }
 
             Game game = new Game();
@@ -47,17 +43,16 @@ namespace SteamMoverWPF
                 library.GamesList.ListChanged += GamesList_ListChanged;
             }
             SortDescription sortDescription = new SortDescription("GameName", ListSortDirection.Ascending);
-            dataGridLeft.Items.SortDescriptions.Add(sortDescription);
-            dataGridRight.Items.SortDescriptions.Add(sortDescription);
+            DataGridLeft.Items.SortDescriptions.Add(sortDescription);
+            DataGridRight.Items.SortDescriptions.Add(sortDescription);
 
-            RealSizeOnDiskTask.Instance.start();
-            
+            RealSizeOnDiskTask.Instance.Start();
         }
 
 
-        void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        private void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            string errorMessage = string.Format("An unhandled exception occurred: {0} {1}", e.Exception.Message, e.Exception.ToString());
+            string errorMessage = $"An unhandled exception occurred: {e.Exception.Message} {e.Exception}";
             MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             e.Handled = true;
         }
@@ -66,27 +61,27 @@ namespace SteamMoverWPF
         {
             InitializeComponent();
             this.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
-            init();
+            Init();
         }
         private void comboBoxLeft_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (comboBoxLeft.SelectedIndex != -1)
+            if (ComboBoxLeft.SelectedIndex != -1)
             {
-                BindingDataContext.Instance.GamesLeft = ((Library)comboBoxLeft.SelectedItem).GamesList;
-                comboBoxLeftSelectedItem = (Library)comboBoxLeft.SelectedItem;
+                BindingDataContext.Instance.GamesLeft = ((Library)ComboBoxLeft.SelectedItem).GamesList;
+                _comboBoxLeftSelectedItem = (Library)ComboBoxLeft.SelectedItem;
             } else
             {
                 foreach (Library library in BindingDataContext.Instance.LibraryList)
                 {
-                    if (comboBoxLeftSelectedItem.SteamAppsDirectory.Equals(library.SteamAppsDirectory, StringComparison.InvariantCultureIgnoreCase))
+                    if (_comboBoxLeftSelectedItem.SteamAppsDirectory.Equals(library.SteamAppsDirectory, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        comboBoxLeft.SelectedItem = library;
+                        ComboBoxLeft.SelectedItem = library;
                         return;
                     }
                 }
                 if (BindingDataContext.Instance.LibraryList.Count > 0)
                 {
-                    comboBoxLeft.SelectedIndex = 0;
+                    ComboBoxLeft.SelectedIndex = 0;
                 }
             }
         }
@@ -94,24 +89,24 @@ namespace SteamMoverWPF
 
         private void comboBoxRight_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (comboBoxRight.SelectedIndex != -1)
+            if (ComboBoxRight.SelectedIndex != -1)
             {
-                BindingDataContext.Instance.GamesRight = ((Library)comboBoxRight.SelectedItem).GamesList;
-                comboBoxRightSelectedItem = (Library)comboBoxRight.SelectedItem;
+                BindingDataContext.Instance.GamesRight = ((Library)ComboBoxRight.SelectedItem).GamesList;
+                _comboBoxRightSelectedItem = (Library)ComboBoxRight.SelectedItem;
             }
             else
             {
                 foreach (Library library in BindingDataContext.Instance.LibraryList)
                 {
-                    if (comboBoxRightSelectedItem.SteamAppsDirectory.Equals(library.SteamAppsDirectory, StringComparison.InvariantCultureIgnoreCase))
+                    if (_comboBoxRightSelectedItem.SteamAppsDirectory.Equals(library.SteamAppsDirectory, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        comboBoxRight.SelectedItem = library;
+                        ComboBoxRight.SelectedItem = library;
                         return;
                     }
                 }
                 if (BindingDataContext.Instance.LibraryList.Count > 0)
                 {
-                    comboBoxRight.SelectedIndex = 0;
+                    ComboBoxRight.SelectedIndex = 0;
                 }
             }
         }
@@ -120,84 +115,54 @@ namespace SteamMoverWPF
         {
             if (e.ListChangedType == ListChangedType.Reset && e.NewIndex == -1)
             {
-                RealSizeOnDiskTask.Instance.restart();
-            }
-        }
-
-
-        private void moveSteamGame(Library source, Library destination, Game selectedGame)
-        {
-            if (!UtilityBox.isSteamRunning())
-            {
-                string gameFolder = selectedGame.GameDirectory;
-                int appID = selectedGame.AppID;
-                RealSizeOnDiskTask.Instance.cancel();
-
-                if (!LibraryManager.moveGame(source, destination, gameFolder))
-                {
-                    //TODO: Reverse move game folder operation? do some cleanup?
-                    return;
-                }
-                if (!LibraryManager.moveACF(source, destination, appID))
-                {
-                    //TODO: Reverse move game folder operation? do some cleanup?
-                    return;
-                }
-                destination.GamesList.Add(selectedGame);
-                source.GamesList.Remove(selectedGame);
-
-                RealSizeOnDiskTask.Instance.start();
-            }
-            else
-            {
-                MessageBox.Show("Turn Off Steam before moving any games.");
+                RealSizeOnDiskTask.Instance.Restart();
             }
         }
 
         private void buttonRight_Click_1(object sender, RoutedEventArgs e)
         {
-            Library source = (Library)comboBoxLeft.SelectedItem;
-            Library destination = (Library)comboBoxRight.SelectedItem;
-            Game selectedGame = (Game)dataGridLeft.SelectedItem;
-            moveSteamGame(source, destination, selectedGame);
+            Library source = (Library)ComboBoxLeft.SelectedItem;
+            Library destination = (Library)ComboBoxRight.SelectedItem;
+            Game selectedGame = (Game)DataGridLeft.SelectedItem;
+            LibraryManager.MoveSteamGame(source, destination, selectedGame);
         }
 
         private void buttonLeft_Click_1(object sender, RoutedEventArgs e)
         {
-            Library source = (Library)comboBoxRight.SelectedItem;
-            Library destination = (Library)comboBoxLeft.SelectedItem;
-            Game selectedGame = (Game)dataGridRight.SelectedItem;
-            moveSteamGame(source, destination, selectedGame);
+            Library source = (Library)ComboBoxRight.SelectedItem;
+            Library destination = (Library)ComboBoxLeft.SelectedItem;
+            Game selectedGame = (Game)DataGridRight.SelectedItem;
+            LibraryManager.MoveSteamGame(source, destination, selectedGame);
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
             Task task = Task.Run(() => {
-                RealSizeOnDiskTask.Instance.cancel();
-                LibraryDetector.refresh();
-                RealSizeOnDiskTask.Instance.start();
+                RealSizeOnDiskTask.Instance.Cancel();
+                LibraryDetector.Refresh();
+                RealSizeOnDiskTask.Instance.Start();
             });
-            bool isLibraryAdded = LibraryManager.addLibrary(task);
+            bool isLibraryAdded = LibraryManager.AddLibrary(task);
             if (isLibraryAdded)
             {
-                RealSizeOnDiskTask.Instance.cancel();
-                LibraryDetector.refresh();
+                RealSizeOnDiskTask.Instance.Cancel();
+                LibraryDetector.Refresh();
                 foreach (Library library in BindingDataContext.Instance.LibraryList)
                 {
                     library.GamesList.ListChanged += GamesList_ListChanged;
                 }
-                RealSizeOnDiskTask.Instance.start();
+                RealSizeOnDiskTask.Instance.Start();
             } 
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
             
-            if (comboBoxRight.SelectedIndex > 0)
+            if (ComboBoxRight.SelectedIndex > 0)
             {
-                RealSizeOnDiskTask.Instance.cancel();
-                LibraryManager.removeLibrary((Library)comboBoxRight.SelectedItem);
-                RealSizeOnDiskTask.Instance.start();
+                RealSizeOnDiskTask.Instance.Cancel();
+                LibraryManager.RemoveLibrary((Library)ComboBoxRight.SelectedItem);
+                RealSizeOnDiskTask.Instance.Start();
             }
 
         }

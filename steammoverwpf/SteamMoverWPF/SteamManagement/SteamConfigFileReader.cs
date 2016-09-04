@@ -1,27 +1,30 @@
-﻿using SteamMoverWPF.Utility;
+﻿using System;
 using System.Collections.Generic;
+using SteamMoverWPF.Utility;
 
-namespace SteamMoverWPF
+namespace SteamMoverWPF.SteamManagement
 {
-    class SteamConfigFileProperty
+    internal class SteamConfigFileProperty
     {
         public string Name;
         public string Value;
     }
-    class SteamConfigFile
+
+    internal class SteamConfigFile
     {
-        public string configType;
-        public List<SteamConfigFileProperty> steamConfigFilePropertyList = new List<SteamConfigFileProperty>();
+        public string ConfigType;
+        public List<SteamConfigFileProperty> SteamConfigFilePropertyList = new List<SteamConfigFileProperty>();
     }
-    static class SteamConfigFileReader
+
+    internal static class SteamConfigFileReader
     {
-        public static SteamConfigFile readFile(string steamPath)
+        public static SteamConfigFile ReadFile(string steamPath)
         {
             SteamConfigFile steamConfigFile = new SteamConfigFile();
             string line;
             System.IO.StreamReader streamReader = new System.IO.StreamReader(steamPath);
             // "LibraryFolders"
-            steamConfigFile.configType = UtilityBox.GetSubstringByString('"', '"', streamReader.ReadLine());
+            steamConfigFile.ConfigType = UtilityBox.GetSubstringByString('"', '"', streamReader.ReadLine());
             //{
             /*
             "appID"		"33900"
@@ -33,7 +36,7 @@ namespace SteamMoverWPF
             */
             while ((line = streamReader.ReadLine()) != null)
             {
-                if (!(line.IndexOf("}") == -1 && line.IndexOf("{") == -1))
+                if (!(line.IndexOf("}", StringComparison.Ordinal) == -1 && line.IndexOf("{", StringComparison.Ordinal) == -1))
                 {
                     continue;
                 }
@@ -43,7 +46,7 @@ namespace SteamMoverWPF
                 line = line.Substring(line.IndexOf('"') + 1);
                 line = line.Substring(line.IndexOf('"') + 1);
                 steamConfigFileProperty.Value = UtilityBox.GetSubstringByString('"', '"', line);
-                steamConfigFile.steamConfigFilePropertyList.Add(steamConfigFileProperty);
+                steamConfigFile.SteamConfigFilePropertyList.Add(steamConfigFileProperty);
             }
             streamReader.Close();
             return steamConfigFile;

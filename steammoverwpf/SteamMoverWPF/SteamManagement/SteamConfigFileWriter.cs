@@ -1,12 +1,13 @@
-﻿using SteamMoverWPF.Entities;
-using System.IO;
+﻿using System.IO;
 using System.Text;
+using SteamMoverWPF.Entities;
+using SteamMoverWPF.Utility;
 
-namespace SteamMoverWPF.Utility
+namespace SteamMoverWPF.SteamManagement
 {
-    static class SteamConfigFileWriter
+    internal static class SteamConfigFileWriter
     {
-        public static void writeLibraryList()
+        public static void WriteLibraryList()
         {
             StringBuilder writer = new StringBuilder();
             StreamReader streamReader = new StreamReader(BindingDataContext.Instance.SteamPath + "\\steamapps\\libraryfolders.vdf");
@@ -34,7 +35,7 @@ namespace SteamMoverWPF.Utility
             streamWriter.Write(writer);
             streamWriter.Close();
         }
-        public static void writeRealSizeOnDisk(string acfPath, double realSizeOnDisk)
+        public static void WriteRealSizeOnDisk(string acfPath, double realSizeOnDisk)
         {
             StringBuilder writer = new StringBuilder();
             StreamReader streamReader = new StreamReader(acfPath);

@@ -1,9 +1,9 @@
-﻿using SteamMoverWPF.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using SteamMoverWPF.Entities;
 
-namespace SteamMoverWPF.Util
+namespace SteamMoverWPF.Utility
 {
     /// <summary>
     /// Provides a generic collection that supports data binding and additionally supports sorting.
@@ -36,35 +36,23 @@ namespace SteamMoverWPF.Util
         /// <summary>
         /// Gets a value indicating whether the list supports sorting.
         /// </summary>
-        protected override bool SupportsSortingCore
-        {
-            get { return true; }
-        }
- 
+        protected override bool SupportsSortingCore => true;
+
         /// <summary>
         /// Gets a value indicating whether the list is sorted.
         /// </summary>
-        protected override bool IsSortedCore
-        {
-            get { return _isSorted; }
-        }
- 
+        protected override bool IsSortedCore => _isSorted;
+
         /// <summary>
         /// Gets the direction the list is sorted.
         /// </summary>
-        protected override ListSortDirection SortDirectionCore
-        {
-            get { return _sortDirection; }
-        }
- 
+        protected override ListSortDirection SortDirectionCore => _sortDirection;
+
         /// <summary>
         /// Gets the property descriptor that is used for sorting the list if sorting is implemented in a derived class; otherwise, returns null
         /// </summary>
-        protected override PropertyDescriptor SortPropertyCore
-        {
-            get { return _sortProperty; }
-        }
- 
+        protected override PropertyDescriptor SortPropertyCore => _sortProperty;
+
         /// <summary>
         /// Removes any sort applied with ApplySortCore if sorting is implemented
         /// </summary>
@@ -140,7 +128,7 @@ namespace SteamMoverWPF.Util
                 return 0; //both are the same
             }
             //not comparable, compare ToString
-            return lhsValue.ToString().CompareTo(rhsValue.ToString());
+            return String.Compare(lhsValue.ToString(), rhsValue.ToString(), StringComparison.Ordinal);
         }
     }
 }
