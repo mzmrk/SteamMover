@@ -27,16 +27,16 @@ namespace SteamMoverWPF.Entities
         public long SizeOnDisk
         {
             get { return _sizeOnDisk; }
-            set { _sizeOnDisk = value; OnPropertyChanged("SizeOnDisk"); OnPropertyChanged("RealSizeOnDiskString"); OnPropertyChanged("RealSizeOnDiskChecked"); }
+            set { _sizeOnDisk = value; OnPropertyChanged("SizeOnDisk"); OnPropertyChanged("RealSizeOnDiskString"); OnPropertyChanged("RealSizeOnDiskLong"); }
         }
         private long _realSizeOnDisk;
         public long RealSizeOnDisk
         {
             get { return _realSizeOnDisk; }
-            set { _realSizeOnDisk = value; OnPropertyChanged("RealSizeOnDisk"); OnPropertyChanged("RealSizeOnDiskString"); OnPropertyChanged("RealSizeOnDiskChecked"); }
+            set { _realSizeOnDisk = value; OnPropertyChanged("RealSizeOnDisk"); OnPropertyChanged("RealSizeOnDiskString"); OnPropertyChanged("RealSizeOnDiskLong"); }
         }
 
-        public long RealSizeOnDiskChecked
+        public long RealSizeOnDiskLong
         {
             get
             {
@@ -68,7 +68,7 @@ namespace SteamMoverWPF.Entities
         public bool RealSizeOnDiskIsChecked
         {
             get { return _realSizeOnDiskIsChecked; }
-            set { _realSizeOnDiskIsChecked = value; OnPropertyChanged("RealSizeOnDisk_isChecked"); }
+            set { _realSizeOnDiskIsChecked = value; OnPropertyChanged("RealSizeOnDiskIsChecked"); }
         }
 
 

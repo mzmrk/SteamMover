@@ -81,6 +81,7 @@ namespace SteamMoverWPF.Tasks
                         {
                             game.RealSizeOnDisk = _lastFinishedRealSizeOnDisk;
                             game.RealSizeOnDiskIsChecked = true;
+                            library.OnPropertyChanged("LibrarySizeOnDisk");
                             SteamConfigFileWriter.WriteRealSizeOnDisk(library.SteamAppsDirectory + "\\appmanifest_" + _lastFinishedGameAppId + ".acf", _lastFinishedRealSizeOnDisk);
                             _lastFinishedGameAppId = 0;
                             _lastFinishedRealSizeOnDisk = 0;
@@ -105,6 +106,7 @@ namespace SteamMoverWPF.Tasks
                         _blockMainThread.Reset();
                         game.RealSizeOnDisk = realSizeOnDisk;
                         game.RealSizeOnDiskIsChecked = true;
+                        library.OnPropertyChanged("LibrarySizeOnDisk");
                         SteamConfigFileWriter.WriteRealSizeOnDisk(library.SteamAppsDirectory + "\\appmanifest_" + game.AppId + ".acf", realSizeOnDisk);
 
                         if (game.RealSizeOnDisk == -1)

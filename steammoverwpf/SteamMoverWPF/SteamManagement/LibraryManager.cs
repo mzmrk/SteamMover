@@ -143,6 +143,10 @@ namespace SteamMoverWPF.SteamManagement
                 }
                 destination.GamesList.Add(selectedGame);
                 source.GamesList.Remove(selectedGame);
+                destination.OnPropertyChanged("LibrarySizeOnDisk");
+                source.OnPropertyChanged("LibrarySizeOnDisk");
+                destination.OnPropertyChanged("FreeSpaceOnDisk");
+                source.OnPropertyChanged("FreeSpaceOnDisk");
 
                 RealSizeOnDiskTask.Instance.Start();
             }

@@ -2,6 +2,7 @@
 using SteamMoverWPF.Tasks;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,12 +25,15 @@ namespace SteamMoverWPF
 
             if (BindingDataContext.Instance.LibraryList.Count == 1)
             {
-                ComboBoxLeft.SelectedIndex = 0;
+               // ComboBoxLeft.SelectedIndex = 0;
+                BindingDataContext.Instance.SelectedLibraryComboboxLeft = BindingDataContext.Instance.LibraryList[0];
             }
             else if (BindingDataContext.Instance.LibraryList.Count > 1)
             {
-                ComboBoxLeft.SelectedIndex = 0;
-                ComboBoxRight.SelectedIndex = 1;
+                //ComboBoxLeft.SelectedIndex = 0;
+                //ComboBoxRight.SelectedIndex = 1;
+                BindingDataContext.Instance.SelectedLibraryComboboxLeft = BindingDataContext.Instance.LibraryList[0];
+                BindingDataContext.Instance.SelectedLibraryComboboxRight = BindingDataContext.Instance.LibraryList[1];
             }
 
             Game game = new Game();
@@ -67,7 +71,6 @@ namespace SteamMoverWPF
         {
             if (ComboBoxLeft.SelectedIndex != -1)
             {
-                BindingDataContext.Instance.GamesLeft = ((Library)ComboBoxLeft.SelectedItem).GamesList;
                 _comboBoxLeftSelectedItem = (Library)ComboBoxLeft.SelectedItem;
             } else
             {
@@ -91,7 +94,6 @@ namespace SteamMoverWPF
         {
             if (ComboBoxRight.SelectedIndex != -1)
             {
-                BindingDataContext.Instance.GamesRight = ((Library)ComboBoxRight.SelectedItem).GamesList;
                 _comboBoxRightSelectedItem = (Library)ComboBoxRight.SelectedItem;
             }
             else

@@ -83,7 +83,7 @@ namespace SteamMoverWPF.Utility
                 //  get property descriptions
                 PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(game);
                 //  get specific descriptor
-                PropertyDescriptor property = properties.Find("RealSizeOnDiskChecked", false);
+                PropertyDescriptor property = properties.Find("RealSizeOnDiskLong", false);
                 _sortProperty = property;
             }
  

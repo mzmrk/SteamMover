@@ -28,17 +28,17 @@ namespace SteamMoverWPF.Entities
             get { return _steamPath; }
             set { _steamPath = value; OnPropertyChanged("SteamPath"); }
         }
-        private SortableBindingList<Game> _gamesLeft;
-        public SortableBindingList<Game> GamesLeft
+        private Library _selectedLibraryComboboxLeft;
+        public Library SelectedLibraryComboboxLeft
         {
-            get { return _gamesLeft; }
-            set { _gamesLeft = value; OnPropertyChanged("GamesLeft"); }
+            get { return _selectedLibraryComboboxLeft; }
+            set { _selectedLibraryComboboxLeft = value; OnPropertyChanged("SelectedLibraryComboboxLeft"); }
         }
-        private SortableBindingList<Game> _gamesRight;
-        public SortableBindingList<Game> GamesRight
+        private Library _selectedLibraryComboboxRight;
+        public Library SelectedLibraryComboboxRight
         {
-            get { return _gamesRight; }
-            set { _gamesRight = value; OnPropertyChanged("GamesRight"); }
+            get { return _selectedLibraryComboboxRight; }
+            set { _selectedLibraryComboboxRight = value; OnPropertyChanged("SelectedLibraryComboboxRight"); }
         }
         private BindingList<Library> _libraryList;
         public BindingList<Library> LibraryList
