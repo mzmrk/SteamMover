@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Windows;
 using Microsoft.Win32;
 using SteamMoverWPF.Entities;
 using SteamMoverWPF.Utility;
@@ -11,13 +13,20 @@ namespace SteamMoverWPF.SteamManagement
     {
         private static string DetectSteamPath()
         {
-            string steamPath = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam")?.GetValue("SteamPath") as string;
-            if (string.IsNullOrEmpty(steamPath))
+            using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam"))
             {
-                //TODO: Show error when steam path cannot be found.
-                throw new Exception("Steam path does not exist. Please run Steam atleast once.");
+                string steamPath = registryKey?.GetValue("SteamPath") as string;
+                try
+                {
+                    return steamPath.Replace("/", "\\");
+                }
+                catch (NullReferenceException ex)
+                {
+                    ErrorHandler.Instance.ShowErrorMessage("Steam path does not exist. Please run Steam atleast once.", ex);
+                    ErrorHandler.Instance.ExitApplication();
+                }            
             }
-            return steamPath.Replace("/", "\\");
+            return null;
         }
 
         private static BindingList<Library> DetectSteamLibraries(string steamPath, BindingList<Library> libraryList)
@@ -25,14 +34,13 @@ namespace SteamMoverWPF.SteamManagement
             SteamConfigFile steamConfigFile = SteamConfigFileReader.ReadFile(steamPath + "\\steamapps\\libraryfolders.vdf");
             if (steamConfigFile.ConfigType != "LibraryFolders")
             {
-                //TODO: Implement error handling.
-                throw new Exception("libraryfolder.vdf has wrong format.");
+                ErrorHandler.Instance.ShowErrorMessage("libraryfolder.vdf has wrong format or it is not supported anymore. Try running steam once to fix corrupted file.");
             }
-            //Adds Basic Steam Library
+            //Adds Main Steam Library
             Library library = new Library();
             library.LibraryDirectory = steamPath;
             libraryList.Add(library);
-            //Adds Others Steam Libraries
+            //Adds Other Steam Libraries
             foreach (SteamConfigFileProperty steamConfigFileProperty in steamConfigFile.SteamConfigFilePropertyList)
             {
                 if (steamConfigFileProperty.Name.Equals("TimeNextStatsReport") || steamConfigFileProperty.Name.Equals("ContentStatsID"))
@@ -76,10 +84,10 @@ namespace SteamMoverWPF.SteamManagement
                         game.SizeOnDisk = Convert.ToInt64(steamConfigFileProperty.Value);
                     }
                 }
-                //game.realSizeOnDisk = GetWSHFolderSize(library.libraryDirectory + "\\common\\" + game.gameDirectory);
-                if (game.RealSizeOnDisk == -1)
+                if (!Directory.Exists(library.SteamAppsDirectory + "\\common\\" + game.GameDirectory))
                 {
-                    // usuń z listy, oznacz jako nieaktywny, coś jest nie tak z tym folderem.
+                    ErrorHandler.Instance.LogError(library.SteamAppsDirectory + "\\common\\" + game.GameDirectory + "does not exist. Removed from library list.");
+                    continue;
                 }
                 game.RealSizeOnDiskIsChecked = false;
                 gamesList.Add(game);

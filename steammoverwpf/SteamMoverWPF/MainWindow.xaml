@@ -19,6 +19,10 @@
         <ComboBox ItemsSource="{Binding LibraryList, Mode=OneWay}" SelectedItem="{Binding SelectedLibraryComboboxLeft}" DisplayMemberPath="LibraryDirectory" x:Name="ComboBoxLeft" HorizontalAlignment="Left" Margin="21,70,0,0" VerticalAlignment="Top" Width="326" SelectionChanged="comboBoxLeft_SelectedIndexChanged"/>
         <ComboBox ItemsSource="{Binding LibraryList, Mode=OneWay}" SelectedItem="{Binding SelectedLibraryComboboxRight}" DisplayMemberPath="LibraryDirectory" x:Name="ComboBoxRight" HorizontalAlignment="Left" Margin="474,70,0,0" VerticalAlignment="Top" Width="350" SelectionChanged="comboBoxRight_SelectedIndexChanged" Grid.ColumnSpan="2"/>
         <DataGrid  ItemsSource="{Binding SelectedLibraryComboboxLeft.GamesList, Mode=OneWay}" x:Name="DataGridLeft" HorizontalAlignment="Left" Margin="21,130,0,0" VerticalAlignment="Top" Height="372" Width="326" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True">
+            <DataGrid.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.HighlightTextColor}"/>
+            </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Game name" Binding="{Binding GameName}" Width="*" />
                 <DataGridTextColumn Header="Size on disk" Binding="{Binding RealSizeOnDiskString}" CellStyle="{StaticResource ActiveCellStyle}" Width="*"/>

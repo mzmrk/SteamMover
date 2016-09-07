@@ -37,7 +37,7 @@ namespace SteamMoverWPF.SteamManagement
         {
             if ((selectedPath == Path.GetPathRoot(selectedPath)))
             {
-                MessageBox.Show("Cannot be RootFolder");
+                ErrorHandler.Instance.ShowErrorMessage("Cannot be RootFolder");
                 return false;
             }
 
@@ -46,7 +46,7 @@ namespace SteamMoverWPF.SteamManagement
             {
                 if (combinedPaths.Contains(library.SteamAppsDirectory.ToLower()))
                 {
-                    MessageBox.Show("Cannot be already added library");
+                    ErrorHandler.Instance.ShowErrorMessage("Library is already on the list.");
                     return false;
                 }
             }
@@ -64,7 +64,7 @@ namespace SteamMoverWPF.SteamManagement
             int countDirs = Directory.GetDirectories(selectedPath).Length;
             if (!(countFiles == 0 && countDirs == 0))
             {
-                MessageBox.Show("Selected folder must be empty.");
+                ErrorHandler.Instance.ShowErrorMessage("Selected folder must be empty.");
                 return false;
             }
             else
@@ -73,7 +73,7 @@ namespace SteamMoverWPF.SteamManagement
             }
         }
 
-        public static bool AddLibrary(Task task)
+        public static bool AddLibrary()
         {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
             folderBrowserDialog.Description = "Create or select new Steam library folder:";
@@ -81,7 +81,6 @@ namespace SteamMoverWPF.SteamManagement
 
             while (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-                task.Wait();
                 string selectedPath = folderBrowserDialog.SelectedPath;
                 isSelectedPathValidated = ValidateSelectedPath(selectedPath);
                 if (isSelectedPathValidated)
@@ -101,7 +100,6 @@ namespace SteamMoverWPF.SteamManagement
                 SteamConfigFileWriter.WriteLibraryList();
                 return true;
             }
-            task.Wait();
             return false;
         }
         public static void RemoveLibrary(Library library)
@@ -110,7 +108,7 @@ namespace SteamMoverWPF.SteamManagement
             BindingDataContext.Instance.LibraryList.Remove(library);
             SteamConfigFileWriter.WriteLibraryList();
             //wyswietl komunikat ze biblioteka dalej jest na dysku, zostala tylko usuenieta ze steam.
-            MessageBox.Show("Library will still exist on harddrive. It is only removed from the list.");
+            ErrorHandler.Instance.ShowNotificationMessage("Library will still exist on harddrive. It is only removed from the list.");
             //open windows explorer with library folder
             Process.Start(library.LibraryDirectory);
         }
@@ -152,7 +150,7 @@ namespace SteamMoverWPF.SteamManagement
             }
             else
             {
-                MessageBox.Show("Turn Off Steam before moving any games.");
+                ErrorHandler.Instance.ShowErrorMessage("Turn Off Steam before moving any games.");
             }
         }
     }

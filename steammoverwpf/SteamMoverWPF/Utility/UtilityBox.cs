@@ -21,17 +21,18 @@ namespace SteamMoverWPF.Utility
         {
             //Reference "Windows Script Host Object Model" on the COM tab.
             IWshRuntimeLibrary.FileSystemObject fso = new IWshRuntimeLibrary.FileSystemObject();
-            double fldrSize;
             try
             {
-                fldrSize = (double)fso.GetFolder(fldr).Size;
+                return(double) fso.GetFolder(fldr).Size;
             }
             catch (DirectoryNotFoundException)
             {
                 return -1;
             }
-            Marshal.FinalReleaseComObject(fso);
-            return fldrSize;
+            finally
+            {
+                Marshal.FinalReleaseComObject(fso);
+            }
         }
         public static bool IsSteamRunning()
         {

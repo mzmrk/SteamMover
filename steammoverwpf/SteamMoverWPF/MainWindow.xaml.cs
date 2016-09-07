@@ -2,8 +2,6 @@
 using SteamMoverWPF.Tasks;
 using System;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using SteamMoverWPF.SteamManagement;
@@ -22,16 +20,12 @@ namespace SteamMoverWPF
         {
             LibraryDetector.Run();
             this.DataContext = BindingDataContext.Instance;
-
             if (BindingDataContext.Instance.LibraryList.Count == 1)
             {
-               // ComboBoxLeft.SelectedIndex = 0;
                 BindingDataContext.Instance.SelectedLibraryComboboxLeft = BindingDataContext.Instance.LibraryList[0];
             }
             else if (BindingDataContext.Instance.LibraryList.Count > 1)
             {
-                //ComboBoxLeft.SelectedIndex = 0;
-                //ComboBoxRight.SelectedIndex = 1;
                 BindingDataContext.Instance.SelectedLibraryComboboxLeft = BindingDataContext.Instance.LibraryList[0];
                 BindingDataContext.Instance.SelectedLibraryComboboxRight = BindingDataContext.Instance.LibraryList[1];
             }
@@ -54,8 +48,9 @@ namespace SteamMoverWPF
         }
 
 
-        private void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        private static void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
+            MessageBox.Show("Unknown error occured. Details in next window after closing this one.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             string errorMessage = $"An unhandled exception occurred: {e.Exception.Message} {e.Exception}";
             MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             e.Handled = true;
@@ -139,12 +134,16 @@ namespace SteamMoverWPF
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            Task task = Task.Run(() => {
-                RealSizeOnDiskTask.Instance.Cancel();
-                LibraryDetector.Refresh();
-                RealSizeOnDiskTask.Instance.Start();
-            });
-            bool isLibraryAdded = LibraryManager.AddLibrary(task);
+            RealSizeOnDiskTask.Instance.Cancel();
+            LibraryDetector.Refresh();
+            foreach (Library library in BindingDataContext.Instance.LibraryList)
+            {
+                library.GamesList.ListChanged += GamesList_ListChanged;
+            }
+            RealSizeOnDiskTask.Instance.Start();
+
+            bool isLibraryAdded = LibraryManager.AddLibrary();
+
             if (isLibraryAdded)
             {
                 RealSizeOnDiskTask.Instance.Cancel();
@@ -159,7 +158,6 @@ namespace SteamMoverWPF
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            
             if (ComboBoxRight.SelectedIndex > 0)
             {
                 RealSizeOnDiskTask.Instance.Cancel();

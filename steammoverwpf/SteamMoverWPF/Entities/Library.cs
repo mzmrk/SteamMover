@@ -22,7 +22,6 @@ namespace SteamMoverWPF.Entities
         public string SteamAppsDirectory
         {
             get { return (_libraryDirectory + "\\SteamApps"); }
-            set { throw new System.Exception("Do not edit this Property. Use LibraryDirectory instead."); }
         }
 
         public string LibrarySizeOnDisk

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using SteamMoverWPF.Utility;
 
 namespace SteamMoverWPF.Entities
 {
