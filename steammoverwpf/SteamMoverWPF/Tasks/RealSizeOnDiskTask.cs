@@ -77,7 +77,7 @@ namespace SteamMoverWPF.Tasks
                 {
                     foreach (Game game in library.GamesList)
                     {
-                        if (_lastFinishedGameAppId == game.AppId)
+                        if (_lastFinishedGameAppId == game.AppID)
                         {
                             game.RealSizeOnDisk = _lastFinishedRealSizeOnDisk;
                             game.RealSizeOnDiskIsChecked = true;
@@ -96,10 +96,10 @@ namespace SteamMoverWPF.Tasks
                     if (!game.RealSizeOnDiskIsChecked)
                     {
                         _blockMainThread.Set();
-                        long realSizeOnDisk = (long)UtilityBox.GetWshFolderSize(library.SteamAppsDirectory + "\\common\\" + game.GameDirectory);
+                        long realSizeOnDisk = (long)UtilityBox.GetWshFolderSize(library.SteamAppsDirectory + "\\common\\" + game.GameFolder);
                         if (_realSizeOnDiskCt.IsCancellationRequested)
                         {
-                            _lastFinishedGameAppId = game.AppId;
+                            _lastFinishedGameAppId = game.AppID;
                             _lastFinishedRealSizeOnDisk = realSizeOnDisk;
                             return;
                         }
@@ -107,13 +107,7 @@ namespace SteamMoverWPF.Tasks
                         game.RealSizeOnDisk = realSizeOnDisk;
                         game.RealSizeOnDiskIsChecked = true;
                         library.OnPropertyChanged("LibrarySizeOnDisk");
-                        SteamConfigFileWriter.WriteRealSizeOnDisk(library.SteamAppsDirectory + "\\appmanifest_" + game.AppId + ".acf", realSizeOnDisk);
-
-                        if (game.RealSizeOnDisk == -1)
-                        {
-                            // usuń z listy, oznacz jako nieaktywny, coś jest nie tak z tym folderem.
-                            //library.GamesList.Remove(game);
-                        }
+                        SteamConfigFileWriter.WriteRealSizeOnDisk(library.SteamAppsDirectory + "\\appmanifest_" + game.AppID + ".acf", realSizeOnDisk);
                     }
                 }
             }

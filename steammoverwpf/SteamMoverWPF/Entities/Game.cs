@@ -5,11 +5,11 @@ namespace SteamMoverWPF.Entities
 {
     public class Game : INotifyPropertyChanged
     {
-        private int _appId;
-        public int AppId
+        private int _appID;
+        public int AppID
         {
-            get { return _appId; }
-            set { _appId = value; OnPropertyChanged("AppID"); }
+            get { return _appID; }
+            set { _appID = value; OnPropertyChanged("AppID"); }
         }
         private string _gameName;
         public string GameName
@@ -17,11 +17,11 @@ namespace SteamMoverWPF.Entities
             get { return _gameName; }
             set { _gameName = value; OnPropertyChanged("GameName"); }
         }
-        private string _gameDirectory;
-        public string GameDirectory
+        private string _gameFolder;
+        public string GameFolder
         {
-            get { return _gameDirectory; }
-            set { _gameDirectory = value; OnPropertyChanged("GameDirectory"); }
+            get { return _gameFolder; }
+            set { _gameFolder = value; OnPropertyChanged("GameFolder"); }
         }
         private long _sizeOnDisk;
         public long SizeOnDisk

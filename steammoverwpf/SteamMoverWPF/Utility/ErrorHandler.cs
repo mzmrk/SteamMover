@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Forms;
 using SteamMoverWPF.Tasks;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 
 namespace SteamMoverWPF.Utility
 {
@@ -31,9 +34,31 @@ namespace SteamMoverWPF.Utility
         {
             MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+        public void ShowCriticalErrorMessage(string message, Exception ex)
+        {
+            RealSizeOnDiskTask.Instance.Cancel();
+            ShowErrorMessage(message);
+            ExitApplication();
+        }
+        public void ShowCriticalErrorMessage(string message)
+        {
+            RealSizeOnDiskTask.Instance.Cancel();
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            ExitApplication();
+        }
         public void ShowNotificationMessage(string message)
         {
             MessageBox.Show(message, "Notification", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        public bool ShowQuestion(string question)
+        {
+            MessageBoxResult dialogResult = MessageBox.Show(question, "Question", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (dialogResult == MessageBoxResult.Yes)
+            {
+                return true;
+            }
+            return false;
         }
 
         [Conditional("DEBUG")]
@@ -45,8 +70,7 @@ namespace SteamMoverWPF.Utility
         public void ExitApplication()
         {
             LogError("Application is forcefully shutting down.");
-            RealSizeOnDiskTask.Instance.Cancel();
-            if (Application.Current.MainWindow.IsLoaded)
+            if (Application.Current != null && Application.Current.MainWindow.IsLoaded)
             {
                 Application.Current.Shutdown();
             }

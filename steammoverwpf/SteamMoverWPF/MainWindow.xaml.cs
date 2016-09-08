@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using SteamMoverWPF.SteamManagement;
+using SteamMoverWPF.Utility;
 
 namespace SteamMoverWPF
 {
@@ -23,6 +24,7 @@ namespace SteamMoverWPF
             if (BindingDataContext.Instance.LibraryList.Count == 1)
             {
                 BindingDataContext.Instance.SelectedLibraryComboboxLeft = BindingDataContext.Instance.LibraryList[0];
+                BindingDataContext.Instance.SelectedLibraryComboboxRight = BindingDataContext.Instance.LibraryList[0];
             }
             else if (BindingDataContext.Instance.LibraryList.Count > 1)
             {
@@ -50,10 +52,12 @@ namespace SteamMoverWPF
 
         private static void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show("Unknown error occured. Details in next window after closing this one.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            RealSizeOnDiskTask.Instance.Cancel();
+            MessageBox.Show("Unknown error occured. Try restarting application. Details of an error will be shown after pressing OK.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             string errorMessage = $"An unhandled exception occurred: {e.Exception.Message} {e.Exception}";
             MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             e.Handled = true;
+            ErrorHandler.Instance.ExitApplication();
         }
 
         public MainWindow()
@@ -118,6 +122,16 @@ namespace SteamMoverWPF
 
         private void buttonRight_Click_1(object sender, RoutedEventArgs e)
         {
+            if (DataGridLeft.SelectedIndex == -1)
+            {
+                ErrorHandler.Instance.ShowNotificationMessage("Please select game before moving.");
+                return;
+            }
+            if (ComboBoxLeft.SelectedIndex == ComboBoxRight.SelectedIndex)
+            {
+                ErrorHandler.Instance.ShowNotificationMessage("You cannot move games between same libraries.");
+                return;
+            }
             Library source = (Library)ComboBoxLeft.SelectedItem;
             Library destination = (Library)ComboBoxRight.SelectedItem;
             Game selectedGame = (Game)DataGridLeft.SelectedItem;
@@ -126,6 +140,16 @@ namespace SteamMoverWPF
 
         private void buttonLeft_Click_1(object sender, RoutedEventArgs e)
         {
+            if (DataGridRight.SelectedIndex == -1)
+            {
+                ErrorHandler.Instance.ShowNotificationMessage("Please select game before moving.");
+                return;
+            }
+            if (ComboBoxLeft.SelectedIndex == ComboBoxRight.SelectedIndex)
+            {
+                ErrorHandler.Instance.ShowNotificationMessage("You cannot move games between same libraries.");
+                return;
+            }
             Library source = (Library)ComboBoxRight.SelectedItem;
             Library destination = (Library)ComboBoxLeft.SelectedItem;
             Game selectedGame = (Game)DataGridRight.SelectedItem;
@@ -158,13 +182,25 @@ namespace SteamMoverWPF
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            if (ComboBoxRight.SelectedIndex > 0)
+            if (ComboBoxRight.SelectedIndex == 0)
             {
-                RealSizeOnDiskTask.Instance.Cancel();
-                LibraryManager.RemoveLibrary((Library)ComboBoxRight.SelectedItem);
-                RealSizeOnDiskTask.Instance.Start();
+                ErrorHandler.Instance.ShowNotificationMessage("You cannot remove main library where main steam installation is located.");
+                return;
             }
+            RealSizeOnDiskTask.Instance.Cancel();
+            LibraryManager.RemoveLibrary((Library)ComboBoxRight.SelectedItem);
+            RealSizeOnDiskTask.Instance.Start();
+        }
 
+
+        private void DataGridRight_GotFocus(object sender, RoutedEventArgs e)
+        {
+            DataGridLeft.SelectedIndex = -1;
+        }
+
+        private void DataGridLeft_GotFocus(object sender, RoutedEventArgs e)
+        {
+            DataGridRight.SelectedIndex = -1;
         }
     }
 }

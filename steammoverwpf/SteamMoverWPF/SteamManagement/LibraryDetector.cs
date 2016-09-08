@@ -22,8 +22,7 @@ namespace SteamMoverWPF.SteamManagement
                 }
                 catch (NullReferenceException ex)
                 {
-                    ErrorHandler.Instance.ShowErrorMessage("Steam path does not exist. Please run Steam atleast once.", ex);
-                    ErrorHandler.Instance.ExitApplication();
+                    ErrorHandler.Instance.ShowCriticalErrorMessage("Steam path does not exist. Please run Steam atleast once.", ex);
                 }            
             }
             return null;
@@ -31,10 +30,10 @@ namespace SteamMoverWPF.SteamManagement
 
         private static BindingList<Library> DetectSteamLibraries(string steamPath, BindingList<Library> libraryList)
         {
-            SteamConfigFile steamConfigFile = SteamConfigFileReader.ReadFile(steamPath + "\\steamapps\\libraryfolders.vdf");
+            SteamConfigFile steamConfigFile = SteamConfigFileReader.ReadLibraryList(steamPath + "\\steamapps\\libraryfolders.vdf");
             if (steamConfigFile.ConfigType != "LibraryFolders")
             {
-                ErrorHandler.Instance.ShowErrorMessage("libraryfolder.vdf has wrong format or it is not supported anymore. Try running steam once to fix corrupted file.");
+                ErrorHandler.Instance.ShowCriticalErrorMessage(steamPath + "\\steamapps\\libraryfolders.vdf has wrong format or it is not supported anymore. Try running steam once to fix corrupted file.");
             }
             //Adds Main Steam Library
             Library library = new Library();
@@ -49,6 +48,7 @@ namespace SteamMoverWPF.SteamManagement
                 }
                 if (!Directory.Exists(steamConfigFileProperty.Value + "\\SteamApps"))
                 {
+                    ErrorHandler.Instance.LogError(steamConfigFileProperty.Value + "\\SteamApps" + "does not exist. Removed from list of libraries.");
                     continue;
                 }
                 library = new Library(); 
@@ -63,13 +63,17 @@ namespace SteamMoverWPF.SteamManagement
             SortableBindingList<Game> gamesList = new SortableBindingList<Game>();
             foreach (string file in filePaths)
             {
-                SteamConfigFile steamConfigFile = SteamConfigFileReader.ReadFile(file);
+                SteamConfigFile steamConfigFile = SteamConfigFileReader.ReadACF(file);
+                if (steamConfigFile.ConfigType != "AppState")
+                {
+                    ErrorHandler.Instance.ShowCriticalErrorMessage(file + " has wrong format or it is not supported anymore. Try running steam once to fix corrupted file.");
+                }
                 Game game = new Game();
                 foreach (SteamConfigFileProperty steamConfigFileProperty in steamConfigFile.SteamConfigFilePropertyList)
                 {
                     if (steamConfigFileProperty.Name.Equals("appID"))
                     {
-                        game.AppId = Convert.ToInt32(steamConfigFileProperty.Value);
+                        game.AppID = Convert.ToInt32(steamConfigFileProperty.Value);
                     }
                     else if (steamConfigFileProperty.Name.Equals("name"))
                     {
@@ -77,16 +81,16 @@ namespace SteamMoverWPF.SteamManagement
                     }
                     else if (steamConfigFileProperty.Name.Equals("installdir"))
                     {
-                        game.GameDirectory = steamConfigFileProperty.Value;
+                        game.GameFolder = steamConfigFileProperty.Value;
                     }
                     else if (steamConfigFileProperty.Name.Equals("SizeOnDisk"))
                     {
                         game.SizeOnDisk = Convert.ToInt64(steamConfigFileProperty.Value);
                     }
                 }
-                if (!Directory.Exists(library.SteamAppsDirectory + "\\common\\" + game.GameDirectory))
+                if (!Directory.Exists(library.SteamAppsDirectory + "\\common\\" + game.GameFolder))
                 {
-                    ErrorHandler.Instance.LogError(library.SteamAppsDirectory + "\\common\\" + game.GameDirectory + "does not exist. Removed from library list.");
+                    ErrorHandler.Instance.LogError(library.SteamAppsDirectory + "\\common\\" + game.GameFolder + "does not exist. Removed from library list.");
                     continue;
                 }
                 game.RealSizeOnDiskIsChecked = false;
@@ -125,7 +129,7 @@ namespace SteamMoverWPF.SteamManagement
                         {
                             foreach (Game gameNew in libraryNew.GamesList)
                             {
-                                if (gameOld.AppId == gameNew.AppId)
+                                if (gameOld.AppID == gameNew.AppID)
                                 {
                                     gameNew.RealSizeOnDisk = gameOld.RealSizeOnDisk;
                                     gameNew.RealSizeOnDiskIsChecked = gameOld.RealSizeOnDiskIsChecked;

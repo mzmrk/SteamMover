@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.VisualBasic.FileIO;
 using SteamMoverWPF.Entities;
 using SteamMoverWPF.Tasks;
 using SteamMoverWPF.Utility;
@@ -11,26 +13,33 @@ namespace SteamMoverWPF.SteamManagement
 {
     public static class LibraryManager
     {
-        private static bool MoveFolder(string source, string destination)
-        {
-            InteropShFileOperation interopShFileOperation = new InteropShFileOperation();
-            interopShFileOperation.WFunc = InteropShFileOperation.FoFunc.FoMove;
-            interopShFileOperation.PFrom = source;
-            interopShFileOperation.PTo = destination;
-            interopShFileOperation.FFlags.FofNoconfirmmkdir = true;
-            return interopShFileOperation.Execute();
-        }
         public static bool MoveGameFolder(Library source, Library destination, string gameFolder) {
             string src = source.SteamAppsDirectory + "\\common\\" + gameFolder;
             string dst = destination.SteamAppsDirectory + "\\common\\" + gameFolder;
-            return MoveFolder(src, dst);
+            try
+            {
+                FileSystem.MoveDirectory(src, dst, UIOption.AllDialogs);
+            }
+            catch (OperationCanceledException)
+            {
+                return false;
+            }
+            return true;
         }
 
         public static bool MoveAcfFile(Library source, Library destination, int appId)
         {
-            string sourceFile = source.SteamAppsDirectory + "\\" + "appmanifest_" + appId + ".acf";
-            string destinationFile = destination.SteamAppsDirectory + "\\" + "appmanifest_" + appId+ ".acf";
-            return MoveFolder(sourceFile, destinationFile);
+            string src = source.SteamAppsDirectory + "\\" + "appmanifest_" + appId + ".acf";
+            string dst = destination.SteamAppsDirectory + "\\" + "appmanifest_" + appId+ ".acf";
+            try
+            {
+                FileSystem.MoveFile(src, dst, UIOption.AllDialogs);
+            }
+            catch (OperationCanceledException)
+            {
+                return false;
+            }
+            return true;
         }
 
         private static bool ValidateSelectedPath(string selectedPath)
@@ -88,26 +97,22 @@ namespace SteamMoverWPF.SteamManagement
                     break;
                 }
             }
-            if (isSelectedPathValidated)
+            if (!isSelectedPathValidated)
             {
-                //dodaj wpis do libraries.vdf
-                Library library = new Library();
-                library.GamesList = new SortableBindingList<Game>();
-                library.LibraryDirectory = folderBrowserDialog.SelectedPath;
-                //TODO: Add steamapps folder to the new library!
-                Directory.CreateDirectory(folderBrowserDialog.SelectedPath + "\\steamapps");
-                BindingDataContext.Instance.LibraryList.Add(library);
-                SteamConfigFileWriter.WriteLibraryList();
-                return true;
+                return false;
             }
-            return false;
+            Library library = new Library();
+            library.GamesList = new SortableBindingList<Game>();
+            library.LibraryDirectory = folderBrowserDialog.SelectedPath;
+            Directory.CreateDirectory(folderBrowserDialog.SelectedPath + "\\steamapps");
+            BindingDataContext.Instance.LibraryList.Add(library);
+            SteamConfigFileWriter.WriteLibraryList();
+            return true;
         }
         public static void RemoveLibrary(Library library)
         {
-            //delete from libriries.vdf file
             BindingDataContext.Instance.LibraryList.Remove(library);
             SteamConfigFileWriter.WriteLibraryList();
-            //wyswietl komunikat ze biblioteka dalej jest na dysku, zostala tylko usuenieta ze steam.
             ErrorHandler.Instance.ShowNotificationMessage("Library will still exist on harddrive. It is only removed from the list.");
             //open windows explorer with library folder
             Process.Start(library.LibraryDirectory);
@@ -121,37 +126,49 @@ namespace SteamMoverWPF.SteamManagement
             //ranme library folder
 
         }
+
         public static void MoveSteamGame(Library source, Library destination, Game selectedGame)
         {
-            if (!UtilityBox.IsSteamRunning())
+            if (UtilityBox.IsSteamRunning())
             {
-                string gameFolder = selectedGame.GameDirectory;
-                int appId = selectedGame.AppId;
-                RealSizeOnDiskTask.Instance.Cancel();
-
-                if (!MoveGameFolder(source, destination, gameFolder))
-                {
-                    //TODO: Reverse move game folder operation? do some cleanup?
-                    return;
-                }
-                if (!MoveAcfFile(source, destination, appId))
-                {
-                    //TODO: Reverse move game folder operation? do some cleanup?
-                    return;
-                }
-                destination.GamesList.Add(selectedGame);
-                source.GamesList.Remove(selectedGame);
-                destination.OnPropertyChanged("LibrarySizeOnDisk");
-                source.OnPropertyChanged("LibrarySizeOnDisk");
-                destination.OnPropertyChanged("FreeSpaceOnDisk");
-                source.OnPropertyChanged("FreeSpaceOnDisk");
-
-                RealSizeOnDiskTask.Instance.Start();
+                ErrorHandler.Instance.ShowNotificationMessage("Turn Off Steam before moving any games.");
+                return;
             }
-            else
+            if (Directory.Exists(destination.SteamAppsDirectory + "\\common\\" + selectedGame.GameFolder))
             {
-                ErrorHandler.Instance.ShowErrorMessage("Turn Off Steam before moving any games.");
+                bool response = ErrorHandler.Instance.ShowQuestion("Game installation of " + selectedGame.GameName + "already exists in destination library. Do you want to overwrite?");
+                if (!response) return;
             }
+            RealSizeOnDiskTask.Instance.Cancel();
+            if (!MoveGameFolder(source, destination, selectedGame.GameFolder))
+            {
+                ErrorHandler.Instance.ShowNotificationMessage("Game moving was aborted. There might be some inconsistencies in game folder. It is advised to finish game move operation.");
+                return;
+            }
+            SortableBindingList<Game> gamesToRemove = new SortableBindingList<Game>();
+            foreach (Game game in source.GamesList)
+            {
+                if (selectedGame.GameFolder.Equals(game.GameFolder, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    if (!MoveAcfFile(source, destination, game.AppID))
+                    {
+                        ErrorHandler.Instance.ShowNotificationMessage("Game moving was aborted. Some games might now show up in steam library.");
+                        return;
+                    }
+                    gamesToRemove.Add(game);
+                }
+            }
+            foreach (Game game in gamesToRemove)
+            {
+                destination.GamesList.Add(game);
+                source.GamesList.Remove(game);
+            }
+
+            RealSizeOnDiskTask.Instance.Start();
+            destination.OnPropertyChanged("LibrarySizeOnDisk");
+            source.OnPropertyChanged("LibrarySizeOnDisk");
+            destination.OnPropertyChanged("FreeSpaceOnDisk");
+            source.OnPropertyChanged("FreeSpaceOnDisk");
         }
     }
 }
