@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -17,17 +18,22 @@ namespace SteamMoverWPF.Utility
             string returnString = c.Substring(start + 1, end);
             return returnString;
         }
-        public static double GetWshFolderSize(string fldr)
+        public static long GetWshFolderSize(string fldr)
         {
             //Reference "Windows Script Host Object Model" on the COM tab.
             IWshRuntimeLibrary.FileSystemObject fso = new IWshRuntimeLibrary.FileSystemObject();
-            double size = (double)fso.GetFolder(fldr).Size;
+            long size = (long)fso.GetFolder(fldr).Size;
             Marshal.FinalReleaseComObject(fso);
             return size;
         }
         public static bool IsSteamRunning()
         {
             return Process.GetProcessesByName("Steam").Length > 0;
+        }
+        public static string NormalizePath(string path)
+        {
+            return Path.GetFullPath(new Uri(path).LocalPath)
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
     }
 }

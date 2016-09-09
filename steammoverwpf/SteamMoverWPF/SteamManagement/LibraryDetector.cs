@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Microsoft.VisualBasic.FileIO;
 using Microsoft.Win32;
 using SteamMoverWPF.Entities;
 using SteamMoverWPF.Utility;
@@ -48,12 +49,28 @@ namespace SteamMoverWPF.SteamManagement
                 }
                 if (!Directory.Exists(steamConfigFileProperty.Value + "\\SteamApps"))
                 {
-                    ErrorHandler.Instance.LogError(steamConfigFileProperty.Value + "\\SteamApps" + "does not exist. Removed from list of libraries.");
+                    ErrorHandler.Instance.Log(steamConfigFileProperty.Value + "\\SteamApps" + "does not exist. Removed from list of libraries.");
                     continue;
                 }
+
                 library = new Library(); 
                 library.LibraryDirectory = steamConfigFileProperty.Value;
                 libraryList.Add(library);
+            }
+            bool isLibraryChaged = false;
+            foreach (Library libraryLoop in libraryList)
+            {
+                string libraryDirectory = libraryLoop.LibraryDirectory;
+                if (libraryDirectory.EndsWith("_removed"))
+                {
+                    libraryDirectory = libraryDirectory.Substring(0, libraryDirectory.Length - "_removed".Length);
+                    FileSystem.RenameDirectory(libraryLoop.LibraryDirectory , Path.GetFileName(libraryDirectory));
+                    isLibraryChaged = true;
+                }
+            }
+            if (isLibraryChaged)
+            {
+                SteamConfigFileWriter.WriteLibraryList();
             }
             return libraryList;
         }
@@ -90,7 +107,7 @@ namespace SteamMoverWPF.SteamManagement
                 }
                 if (!Directory.Exists(library.SteamAppsDirectory + "\\common\\" + game.GameFolder))
                 {
-                    ErrorHandler.Instance.LogError(library.SteamAppsDirectory + "\\common\\" + game.GameFolder + "does not exist. Removed from library list.");
+                    ErrorHandler.Instance.Log(library.SteamAppsDirectory + "\\common\\" + game.GameFolder + "does not exist. Removed from library list.");
                     continue;
                 }
                 game.RealSizeOnDiskIsChecked = false;

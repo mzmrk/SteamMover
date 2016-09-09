@@ -40,7 +40,6 @@ namespace SteamMoverWPF
             foreach (Library library in BindingDataContext.Instance.LibraryList)
             {
                 library.GamesList.SortMyList(property, ListSortDirection.Ascending);
-                library.GamesList.ListChanged += GamesList_ListChanged;
             }
             SortDescription sortDescription = new SortDescription("GameName", ListSortDirection.Ascending);
             DataGridLeft.Items.SortDescriptions.Add(sortDescription);
@@ -112,14 +111,6 @@ namespace SteamMoverWPF
             }
         }
 
-        private void GamesList_ListChanged(object sender, ListChangedEventArgs e)
-        {
-            if (e.ListChangedType == ListChangedType.Reset && e.NewIndex == -1)
-            {
-                RealSizeOnDiskTask.Instance.Restart();
-            }
-        }
-
         private void buttonRight_Click_1(object sender, RoutedEventArgs e)
         {
             if (DataGridLeft.SelectedIndex == -1)
@@ -160,10 +151,6 @@ namespace SteamMoverWPF
         {
             RealSizeOnDiskTask.Instance.Cancel();
             LibraryDetector.Refresh();
-            foreach (Library library in BindingDataContext.Instance.LibraryList)
-            {
-                library.GamesList.ListChanged += GamesList_ListChanged;
-            }
             RealSizeOnDiskTask.Instance.Start();
 
             bool isLibraryAdded = LibraryManager.AddLibrary();
@@ -172,22 +159,34 @@ namespace SteamMoverWPF
             {
                 RealSizeOnDiskTask.Instance.Cancel();
                 LibraryDetector.Refresh();
-                foreach (Library library in BindingDataContext.Instance.LibraryList)
-                {
-                    library.GamesList.ListChanged += GamesList_ListChanged;
-                }
                 RealSizeOnDiskTask.Instance.Start();
             } 
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
+
             if (ComboBoxRight.SelectedIndex == 0)
             {
                 ErrorHandler.Instance.ShowNotificationMessage("You cannot remove main library where main steam installation is located.");
                 return;
             }
+            Library libraryToRemove = (Library) ComboBoxRight.SelectedItem;
             RealSizeOnDiskTask.Instance.Cancel();
+            LibraryDetector.Refresh();
+            Library refreshedLibraryToRemove = null;
+            foreach (Library library in BindingDataContext.Instance.LibraryList)
+            {
+                if (libraryToRemove.LibraryDirectory.Equals(library.LibraryDirectory,StringComparison.CurrentCultureIgnoreCase))
+                {
+                    refreshedLibraryToRemove = library;
+                }
+            }
+            if (refreshedLibraryToRemove == null)
+            {
+                ErrorHandler.Instance.ShowErrorMessage("Library you are trying to remove is already removed.");
+                return;
+            }
             LibraryManager.RemoveLibrary((Library)ComboBoxRight.SelectedItem);
             RealSizeOnDiskTask.Instance.Start();
         }

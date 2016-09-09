@@ -27,7 +27,7 @@ namespace SteamMoverWPF.Tasks
         private volatile bool _taskRestartRequested;
         private int _lastFinishedGameAppId;
         private long _lastFinishedRealSizeOnDisk;
-        private readonly ManualResetEvent _blockMainThread = new ManualResetEvent(false);
+        private readonly ManualResetEvent _blockMainThread = new ManualResetEvent(true);
 
         private RealSizeOnDiskTask()
         {
@@ -49,7 +49,17 @@ namespace SteamMoverWPF.Tasks
             _taskRestartRequested = true;
             if (Interlocked.Increment(ref _taskRestartRequestedLock) == 1)
             {
-                if (_realSizeOnDiskTask != null) await _realSizeOnDiskTask;
+                if (_realSizeOnDiskTask != null)
+                {
+                    try
+                    {
+                        await _realSizeOnDiskTask;
+                    }
+                    catch (TaskCanceledException ex)
+                    {
+                        ErrorHandler.Instance.Log("Task has been canceled.", ex);
+                    }
+                }
                 if (_taskRestartRequested)
                 {
                     _realSizeOnDiskCts = new CancellationTokenSource();
@@ -96,7 +106,7 @@ namespace SteamMoverWPF.Tasks
                     if (!game.RealSizeOnDiskIsChecked)
                     {
                         _blockMainThread.Set();
-                        long realSizeOnDisk = (long)UtilityBox.GetWshFolderSize(library.SteamAppsDirectory + "\\common\\" + game.GameFolder);
+                        long realSizeOnDisk = UtilityBox.GetWshFolderSize(library.SteamAppsDirectory + "\\common\\" + game.GameFolder);
                         if (_realSizeOnDiskCt.IsCancellationRequested)
                         {
                             _lastFinishedGameAppId = game.AppID;

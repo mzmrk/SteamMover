@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using SteamMoverWPF.Entities;
+using SteamMoverWPF.Tasks;
 
 namespace SteamMoverWPF.Utility
 {
@@ -72,8 +73,10 @@ namespace SteamMoverWPF.Utility
         public void SortMyList(PropertyDescriptor prop, ListSortDirection direction) {
             ApplySortCore(prop, direction);
         }
+
         protected override void ApplySortCore(PropertyDescriptor prop, ListSortDirection direction)
         {
+            RealSizeOnDiskTask.Instance.Cancel();
             _sortProperty = prop;
             _sortDirection = direction;
 
@@ -86,18 +89,18 @@ namespace SteamMoverWPF.Utility
                 PropertyDescriptor property = properties.Find("RealSizeOnDiskLong", false);
                 _sortProperty = property;
             }
- 
+
             List<T> list = Items as List<T>;
             if (list == null) return;
 
             list.Sort(Compare);
 
             _isSorted = true;
-            //fire an event that the list has been changed.
+            RealSizeOnDiskTask.Instance.Start();
             OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
         }
- 
- 
+
+
         private int Compare(T lhs, T rhs)
         {
             var result = OnComparison(lhs, rhs);

@@ -60,11 +60,11 @@
     <Compile Include="Entities\Library.cs" />
     <Compile Include="Tasks\RealSizeOnDiskTask.cs" />
     <Compile Include="Utility\ErrorHandler.cs" />
-    <Compile Include="Utility\InteropSHFileOperation.cs" />
     <Compile Include="SteamManagement\LibraryManager.cs" />
     <Compile Include="Utility\SortableBindingList.cs" />
     <Compile Include="SteamManagement\SteamConfigFileReader.cs" />
     <Compile Include="SteamManagement\SteamConfigFileWriter.cs" />
+    <Compile Include="Utility\GetDiskFreeSpace.cs" />
     <Compile Include="Utility\UtilityBox.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

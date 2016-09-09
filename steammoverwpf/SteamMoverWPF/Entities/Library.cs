@@ -49,7 +49,7 @@ namespace SteamMoverWPF.Entities
         {
             get
             {
-                long freeSpaceInBytes = new DriveInfo(_libraryDirectory).AvailableFreeSpace;
+                long freeSpaceInBytes = GetDiskFreeSpace.FreeSpace(_libraryDirectory);
                 return ((double)freeSpaceInBytes / 1024 / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture) + " GB";
             }
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.FileIO;
@@ -87,10 +88,11 @@ namespace SteamMoverWPF.SteamManagement
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
             folderBrowserDialog.Description = "Create or select new Steam library folder:";
             bool isSelectedPathValidated = false;
+            string selectedPath;
 
             while (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-                string selectedPath = folderBrowserDialog.SelectedPath;
+                selectedPath = folderBrowserDialog.SelectedPath;
                 isSelectedPathValidated = ValidateSelectedPath(selectedPath);
                 if (isSelectedPathValidated)
                 {
@@ -101,21 +103,28 @@ namespace SteamMoverWPF.SteamManagement
             {
                 return false;
             }
+            selectedPath = folderBrowserDialog.SelectedPath;
+            if (selectedPath.EndsWith("_removed"))
+            {
+                selectedPath = selectedPath.Substring(0, selectedPath.Length - "_removed".Length);
+                FileSystem.RenameDirectory(folderBrowserDialog.SelectedPath, Path.GetFileName(selectedPath));
+            }
             Library library = new Library();
             library.GamesList = new SortableBindingList<Game>();
-            library.LibraryDirectory = folderBrowserDialog.SelectedPath;
-            Directory.CreateDirectory(folderBrowserDialog.SelectedPath + "\\steamapps");
+            library.LibraryDirectory = selectedPath;
+            Directory.CreateDirectory(selectedPath + "\\steamapps");
             BindingDataContext.Instance.LibraryList.Add(library);
             SteamConfigFileWriter.WriteLibraryList();
             return true;
         }
         public static void RemoveLibrary(Library library)
         {
+            FileSystem.RenameDirectory(library.LibraryDirectory, Path.GetFileName(library.LibraryDirectory) + "_removed");
             BindingDataContext.Instance.LibraryList.Remove(library);
             SteamConfigFileWriter.WriteLibraryList();
             ErrorHandler.Instance.ShowNotificationMessage("Library will still exist on harddrive. It is only removed from the list.");
             //open windows explorer with library folder
-            Process.Start(library.LibraryDirectory);
+            Process.Start(library.LibraryDirectory + "_removed");
         }
         public static void RenameLibrary(Library library)
         {
