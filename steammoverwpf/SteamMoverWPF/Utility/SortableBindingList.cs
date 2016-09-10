@@ -17,43 +17,35 @@ namespace SteamMoverWPF.Utility
         private bool _isSorted;
         private ListSortDirection _sortDirection = ListSortDirection.Ascending;
         private PropertyDescriptor _sortProperty;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="SortableBindingList{T}"/> class.
         /// </summary>
         public SortableBindingList()
         {
         }
- 
         /// <summary>
         /// Initializes a new instance of the <see cref="SortableBindingList{T}"/> class.
         /// </summary>
         /// <param name="list">An <see cref="T:System.Collections.Generic.IList`1" /> of items to be contained in the <see cref="T:System.ComponentModel.BindingList`1" />.</param>
-        public SortableBindingList(IList<T> list)
-            :base(list)
+        public SortableBindingList(IList<T> list) :base(list)
         {
         }
- 
         /// <summary>
         /// Gets a value indicating whether the list supports sorting.
         /// </summary>
         protected override bool SupportsSortingCore => true;
-
         /// <summary>
         /// Gets a value indicating whether the list is sorted.
         /// </summary>
         protected override bool IsSortedCore => _isSorted;
-
         /// <summary>
         /// Gets the direction the list is sorted.
         /// </summary>
         protected override ListSortDirection SortDirectionCore => _sortDirection;
-
         /// <summary>
         /// Gets the property descriptor that is used for sorting the list if sorting is implemented in a derived class; otherwise, returns null
         /// </summary>
         protected override PropertyDescriptor SortPropertyCore => _sortProperty;
-
         /// <summary>
         /// Removes any sort applied with ApplySortCore if sorting is implemented
         /// </summary>
@@ -61,46 +53,35 @@ namespace SteamMoverWPF.Utility
         {
             _sortDirection = ListSortDirection.Ascending;
             _sortProperty = null;
-            _isSorted = false; //thanks Luca
+            _isSorted = false;
         }
- 
         /// <summary>
         /// Sorts the items if overridden in a derived class
         /// </summary>
         /// <param name="prop"></param>
         /// <param name="direction"></param>
-
         public void SortMyList(PropertyDescriptor prop, ListSortDirection direction) {
             ApplySortCore(prop, direction);
         }
-
         protected override void ApplySortCore(PropertyDescriptor prop, ListSortDirection direction)
         {
             RealSizeOnDiskTask.Instance.Cancel();
             _sortProperty = prop;
             _sortDirection = direction;
-
             if (_sortProperty.Name == "RealSizeOnDiskString")
             {
                 Game game = new Game();
-                //  get property descriptions
                 PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(game);
-                //  get specific descriptor
                 PropertyDescriptor property = properties.Find("RealSizeOnDiskLong", false);
                 _sortProperty = property;
             }
-
             List<T> list = Items as List<T>;
             if (list == null) return;
-
             list.Sort(Compare);
-
             _isSorted = true;
             RealSizeOnDiskTask.Instance.Start();
             OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
         }
-
-
         private int Compare(T lhs, T rhs)
         {
             var result = OnComparison(lhs, rhs);
@@ -109,7 +90,6 @@ namespace SteamMoverWPF.Utility
                 result = -result;
             return result;
         }
- 
         private int OnComparison(T lhs, T rhs)
         {
             object lhsValue = lhs == null ? null : _sortProperty.GetValue(lhs);
@@ -131,7 +111,7 @@ namespace SteamMoverWPF.Utility
                 return 0; //both are the same
             }
             //not comparable, compare ToString
-            return String.Compare(lhsValue.ToString(), rhsValue.ToString(), StringComparison.Ordinal);
+            return string.Compare(lhsValue.ToString(), rhsValue.ToString(), StringComparison.Ordinal);
         }
     }
 }

@@ -10,15 +10,13 @@ namespace SteamMoverWPF.SteamManagement
         public static void WriteLibraryList()
         {
             StringBuilder writer = new StringBuilder();
-            StreamReader streamReader = new StreamReader(BindingDataContext.Instance.SteamPath + "\\steamapps\\libraryfolders.vdf");
-
-            writer.AppendLine(streamReader.ReadLine());
-            writer.AppendLine(streamReader.ReadLine());
-            writer.AppendLine(streamReader.ReadLine());
-            writer.AppendLine(streamReader.ReadLine());
-
-            streamReader.Close();
-
+            using (StreamReader streamReader = new StreamReader(BindingDataContext.Instance.SteamPath + "\\steamapps\\libraryfolders.vdf"))
+            {
+                writer.AppendLine(streamReader.ReadLine());
+                writer.AppendLine(streamReader.ReadLine());
+                writer.AppendLine(streamReader.ReadLine());
+                writer.AppendLine(streamReader.ReadLine());
+            }
             int i = 0;
             foreach (Library library in BindingDataContext.Instance.LibraryList)
             {
@@ -31,33 +29,36 @@ namespace SteamMoverWPF.SteamManagement
                 i++;
             }
             writer.AppendLine("}");
-            StreamWriter streamWriter = new StreamWriter(BindingDataContext.Instance.SteamPath + "\\steamapps\\libraryfolders.vdf");
-            streamWriter.Write(writer);
-            streamWriter.Close();
+            using (StreamWriter streamWriter = new StreamWriter(BindingDataContext.Instance.SteamPath + "\\steamapps\\libraryfolders.vdf"))
+            {
+                streamWriter.Write(writer);
+            }
         }
+
         public static void WriteRealSizeOnDisk(string acfPath, double realSizeOnDisk)
         {
             StringBuilder writer = new StringBuilder();
-            StreamReader streamReader = new StreamReader(acfPath);
-
-            string line;
-            while ((line = streamReader.ReadLine()) != null)
+            using (StreamReader streamReader = new StreamReader(acfPath))
             {
-                string propertyName = StringOperations.GetSubstringByString('"', '"', line);
-                if (propertyName != null && propertyName.Equals("SizeOnDisk"))
+                string line;
+                while ((line = streamReader.ReadLine()) != null)
                 {
-                    writer.AppendLine("\t\"SizeOnDisk\"\t\t\"" + realSizeOnDisk + "\"");
-                } else
-                {
-                    writer.AppendLine(line);
-                }
-                
-            }
-            streamReader.Close();
+                    string propertyName = StringOperations.GetSubstringByString('"', '"', line);
+                    if (propertyName != null && propertyName.Equals("SizeOnDisk"))
+                    {
+                        writer.AppendLine("\t\"SizeOnDisk\"\t\t\"" + realSizeOnDisk + "\"");
+                    }
+                    else
+                    {
+                        writer.AppendLine(line);
+                    }
 
-            StreamWriter streamWriter = new StreamWriter(acfPath);
-            streamWriter.Write(writer);
-            streamWriter.Close();
+                }
+            }
+            using (StreamWriter streamWriter = new StreamWriter(acfPath))
+            {
+                streamWriter.Write(writer);
+            }
         }
     }
 }

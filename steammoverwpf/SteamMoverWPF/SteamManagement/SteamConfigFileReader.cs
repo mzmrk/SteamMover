@@ -62,6 +62,7 @@ namespace SteamMoverWPF.SteamManagement
             }
             return steamConfigFile;
         }
+        // ReSharper disable once InconsistentNaming
         public static SteamConfigFile ReadACF(string steamPath)
         {
             SteamConfigFile steamConfigFile = new SteamConfigFile();

@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.FileIO;
 using SteamMoverWPF.Entities;
 using SteamMoverWPF.Tasks;
 using SteamMoverWPF.Utility;
+// ReSharper disable AssignNullToNotNullAttribute
 
 namespace SteamMoverWPF.SteamManagement
 {
@@ -27,7 +25,6 @@ namespace SteamMoverWPF.SteamManagement
             }
             return true;
         }
-
         public static bool MoveAcfFile(Library source, Library destination, int appId)
         {
             string src = source.SteamAppsDirectory + "\\" + "appmanifest_" + appId + ".acf";
@@ -42,7 +39,6 @@ namespace SteamMoverWPF.SteamManagement
             }
             return true;
         }
-
         private static bool ValidateSelectedPath(string selectedPath)
         {
             if ((selectedPath == Path.GetPathRoot(selectedPath)))
@@ -50,7 +46,6 @@ namespace SteamMoverWPF.SteamManagement
                 ErrorHandler.Instance.ShowErrorMessage("Cannot be RootFolder");
                 return false;
             }
-
             string combinedPaths = Path.Combine(selectedPath, "SteamApps").ToLower();
             foreach (Library library in BindingDataContext.Instance.LibraryList)
             {
@@ -60,7 +55,6 @@ namespace SteamMoverWPF.SteamManagement
                     return false;
                 }
             }
-
             foreach (string directory in Directory.GetDirectories(selectedPath))
             {
                 string directoryTmp = Path.GetFileName(directory);
@@ -69,7 +63,6 @@ namespace SteamMoverWPF.SteamManagement
                     return true;
                 }
             }
-
             int countFiles = Directory.GetFiles(selectedPath).Length;
             int countDirs = Directory.GetDirectories(selectedPath).Length;
             if (!(countFiles == 0 && countDirs == 0))
@@ -82,14 +75,20 @@ namespace SteamMoverWPF.SteamManagement
                 return true;
             }
         }
-
-        public static bool AddLibrary()
+        public static void AddLibrary()
         {
+            if (UtilityBox.IsSteamRunning())
+            {
+                ErrorHandler.Instance.ShowNotificationMessage("Turn Off Steam removing steam library.");
+                return;
+            }
+            RealSizeOnDiskTask.Instance.Cancel();
+            LibraryDetector.Refresh();
+            RealSizeOnDiskTask.Instance.Start();
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
             folderBrowserDialog.Description = "Create or select new Steam library folder:";
             bool isSelectedPathValidated = false;
             string selectedPath;
-
             while (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
                 selectedPath = folderBrowserDialog.SelectedPath;
@@ -101,12 +100,12 @@ namespace SteamMoverWPF.SteamManagement
             }
             if (!isSelectedPathValidated)
             {
-                return false;
+                return;
             }
             selectedPath = folderBrowserDialog.SelectedPath;
             if (selectedPath.EndsWith("_removed"))
             {
-                selectedPath = StringOperations.removeStringAtEnd(selectedPath, "_removed");
+                selectedPath = StringOperations.RemoveStringAtEnd(selectedPath, "_removed");
                 selectedPath = StringOperations.RenamePathWhenExists(selectedPath);
                 FileSystem.RenameDirectory(folderBrowserDialog.SelectedPath, Path.GetFileName(selectedPath));
             }
@@ -114,29 +113,50 @@ namespace SteamMoverWPF.SteamManagement
             library.GamesList = new SortableBindingList<Game>();
             library.LibraryDirectory = selectedPath;
             Directory.CreateDirectory(selectedPath + "\\steamapps");
+            RealSizeOnDiskTask.Instance.Cancel();
             BindingDataContext.Instance.LibraryList.Add(library);
             SteamConfigFileWriter.WriteLibraryList();
-            return true;
+            LibraryDetector.Refresh();
+            RealSizeOnDiskTask.Instance.Start();
         }
-        public static void RemoveLibrary(Library library)
+        public static void RemoveLibrary(Library libraryToRemove)
         {
-            string newLibraryDirectory = library.LibraryDirectory + "_removed";
+            if (UtilityBox.IsSteamRunning())
+            {
+                ErrorHandler.Instance.ShowNotificationMessage("Turn Off Steam removing steam library.");
+                return;
+            }
+            RealSizeOnDiskTask.Instance.Cancel();
+            LibraryDetector.Refresh();
+            Library refreshedLibraryToRemove = null;
+            foreach (Library library in BindingDataContext.Instance.LibraryList)
+            {
+                if (libraryToRemove.LibraryDirectory.Equals(library.LibraryDirectory, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    refreshedLibraryToRemove = library;
+                }
+            }
+            if (refreshedLibraryToRemove == null)
+            {
+                ErrorHandler.Instance.ShowErrorMessage("Library you are trying to remove is already removed.");
+                return;
+            }
+            string newLibraryDirectory = refreshedLibraryToRemove.LibraryDirectory + "_removed";
             newLibraryDirectory = StringOperations.RenamePathWhenExists(newLibraryDirectory, "_removed");
-            FileSystem.RenameDirectory(library.LibraryDirectory, Path.GetFileName(newLibraryDirectory));
-            BindingDataContext.Instance.LibraryList.Remove(library);
+            FileSystem.RenameDirectory(refreshedLibraryToRemove.LibraryDirectory, Path.GetFileName(newLibraryDirectory));
+            BindingDataContext.Instance.LibraryList.Remove(refreshedLibraryToRemove);
+            RealSizeOnDiskTask.Instance.Start();
             SteamConfigFileWriter.WriteLibraryList();
             ErrorHandler.Instance.ShowNotificationMessage("Library will still exist on harddrive. It is only removed from the list.");
-            //open windows explorer with library folder
-            Process.Start(library.LibraryDirectory + "_removed");
+            Process.Start(refreshedLibraryToRemove.LibraryDirectory + "_removed");
         }
         public static void RenameLibrary(Library library)
         {
+            //TODO: Add Library Rename Operation
             //string newLibraryName = Interaction.InputBox("type new library folder name", "Title", "Default Text");
-
             //library.LibraryDirectory
             //rename in libraries.vdf
-            //ranme library folder
-
+            //rename library folder
         }
 
         public static void MoveSteamGame(Library source, Library destination, Game selectedGame)
@@ -175,7 +195,6 @@ namespace SteamMoverWPF.SteamManagement
                 destination.GamesList.Add(game);
                 source.GamesList.Remove(game);
             }
-
             RealSizeOnDiskTask.Instance.Start();
             destination.OnPropertyChanged("LibrarySizeOnDisk");
             source.OnPropertyChanged("LibrarySizeOnDisk");

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Windows;
 using Microsoft.VisualBasic.FileIO;
 using Microsoft.Win32;
 using SteamMoverWPF.Entities;
 using SteamMoverWPF.Utility;
+// ReSharper disable PossibleNullReferenceException
+// ReSharper disable AssignNullToNotNullAttribute
 
 namespace SteamMoverWPF.SteamManagement
 {
@@ -63,7 +63,7 @@ namespace SteamMoverWPF.SteamManagement
                 string libraryDirectory = libraryLoop.LibraryDirectory;
                 if (libraryDirectory.EndsWith("_removed"))
                 {
-                    libraryDirectory = StringOperations.removeStringAtEnd(libraryDirectory, "_removed");
+                    libraryDirectory = StringOperations.RemoveStringAtEnd(libraryDirectory, "_removed");
                     libraryDirectory = StringOperations.RenamePathWhenExists(libraryDirectory);
                     FileSystem.RenameDirectory(libraryLoop.LibraryDirectory , Path.GetFileName(libraryDirectory));
                     library.LibraryDirectory = libraryDirectory;
@@ -128,7 +128,7 @@ namespace SteamMoverWPF.SteamManagement
         }
         public static void Refresh()
         {
-            //Rebuild libraries
+            //refresh libraries from disk
             BindingList<Library> libraryList = new BindingList<Library>();
             string steamPath = DetectSteamPath();
             libraryList = DetectSteamLibraries(steamPath, libraryList);
@@ -136,7 +136,6 @@ namespace SteamMoverWPF.SteamManagement
             {
                 DetectSteamGames(library);
             }
-
             //Copy games sizes on disk
             foreach (Library libraryOld in BindingDataContext.Instance.LibraryList)
             {
@@ -161,11 +160,8 @@ namespace SteamMoverWPF.SteamManagement
 
                 }
             }
-            //Sort list
             Game game = new Game();
-            //  get property descriptions
             PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(game);
-            //  get specific descriptor
             PropertyDescriptor property = properties.Find("GameName", false);
             foreach (Library library in libraryList)
             {

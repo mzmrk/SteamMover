@@ -5,22 +5,15 @@ namespace SteamMoverWPF.Entities
     public sealed class BindingDataContext : INotifyPropertyChanged
     {
         #region Singleton Stuff
-
-        // Explicit static constructor to tell C# compiler
-        // not to mark type as beforefieldinit
         static BindingDataContext()
         {
         }
-
         private BindingDataContext()
         {
             LibraryList = new BindingList<Library>();
         }
-
         public static BindingDataContext Instance { get; } = new BindingDataContext();
-
         #endregion
-
         private string _steamPath;
         public string SteamPath
         {
@@ -45,7 +38,6 @@ namespace SteamMoverWPF.Entities
             get { return _libraryList; }
             set { _libraryList = value; OnPropertyChanged("LibraryList"); }
         }
-
         #region OnPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)

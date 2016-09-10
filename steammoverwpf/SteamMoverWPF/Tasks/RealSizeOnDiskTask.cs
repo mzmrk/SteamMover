@@ -9,17 +9,15 @@ namespace SteamMoverWPF.Tasks
     internal class RealSizeOnDiskTask
     {
         #region Singleton Stuff
-
-        // Explicit static constructor to tell C# compiler
-        // not to mark type as beforefieldinit
         static RealSizeOnDiskTask()
         {
         }
+        private RealSizeOnDiskTask()
+        {
 
+        }
         public static RealSizeOnDiskTask Instance { get; } = new RealSizeOnDiskTask();
-
         #endregion
-
         private Task _realSizeOnDiskTask;
         private CancellationTokenSource _realSizeOnDiskCts;
         private CancellationToken _realSizeOnDiskCt;
@@ -28,12 +26,6 @@ namespace SteamMoverWPF.Tasks
         private int _lastFinishedGameAppId;
         private long _lastFinishedRealSizeOnDisk;
         private readonly ManualResetEvent _blockMainThread = new ManualResetEvent(true);
-
-        private RealSizeOnDiskTask()
-        {
-
-        }
-
         public void Cancel()
         {
             if (_realSizeOnDiskTask != null)
@@ -43,7 +35,6 @@ namespace SteamMoverWPF.Tasks
                 _blockMainThread.WaitOne();
             }
         }
-
         public async void Start()
         {
             _taskRestartRequested = true;
@@ -70,14 +61,6 @@ namespace SteamMoverWPF.Tasks
             }
             Interlocked.Decrement(ref _taskRestartRequestedLock);
         }
-
-
-        public void Restart()
-        {
-            Cancel();
-            Start();
-        }
-
         private void WorkThreadRealSizeOnDisk()
         {
             _blockMainThread.Reset();

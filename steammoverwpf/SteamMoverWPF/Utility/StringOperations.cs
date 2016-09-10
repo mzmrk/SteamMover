@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+// ReSharper disable AssignNullToNotNullAttribute
 
 namespace SteamMoverWPF.Utility
 {
     class StringOperations
     {
-        public static string removeStringAtEnd(string s, string stringEnding)
+        public static string RemoveStringAtEnd(string s, string stringEnding)
         {
             return s.Substring(0, s.Length - stringEnding.Length);
         }
@@ -24,23 +21,18 @@ namespace SteamMoverWPF.Utility
             string returnString = c.Substring(start + 1, end);
             return returnString;
         }
-
         public static string NormalizePath(string path)
         {
-            return Path.GetFullPath(new Uri(path).LocalPath)
-                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            return Path.GetFullPath(new Uri(path).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
-
-
         private static string RenameWhenPathExistsCommon(string fullPath, string fileNameOnly, string extension)
         {
             int count = 1;
-
             string path = Path.GetDirectoryName(fullPath);
             string newFullPath = fullPath;
             if (fileNameOnly.EndsWith(")"))
             {
-                int start = fileNameOnly.LastIndexOf("(");
+                int start = fileNameOnly.LastIndexOf("(", StringComparison.Ordinal);
                 int end = fileNameOnly.Length - 1;
                 string number = fileNameOnly.Substring(start + 1, end - start - 1);
                 try
@@ -60,22 +52,19 @@ namespace SteamMoverWPF.Utility
             }
             return newFullPath;
         }
-
         public static string RenamePathWhenExists(string fullPath)
         {
-
             string fileNameOnly = Path.GetFileNameWithoutExtension(fullPath);
             string extension = Path.GetExtension(fullPath);
             return RenameWhenPathExistsCommon(fullPath, fileNameOnly, extension);
         }
-
         public static string RenamePathWhenExists(string fullPath, string extraWordAtEnd)
         {
             if (!fullPath.EndsWith(extraWordAtEnd))
             {
                 return RenamePathWhenExists(fullPath);
             }
-            string fileNameOnly = removeStringAtEnd(Path.GetFileNameWithoutExtension(fullPath),extraWordAtEnd);
+            string fileNameOnly = RemoveStringAtEnd(Path.GetFileNameWithoutExtension(fullPath),extraWordAtEnd);
             string extension = extraWordAtEnd + Path.GetExtension(fullPath);
             return RenameWhenPathExistsCommon(fullPath, fileNameOnly, extension);
         }

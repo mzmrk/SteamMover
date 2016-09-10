@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
+// ReSharper disable InconsistentNaming
 
 namespace SteamMoverWPF.Entities
 {
@@ -35,7 +36,6 @@ namespace SteamMoverWPF.Entities
             get { return _realSizeOnDisk; }
             set { _realSizeOnDisk = value; OnPropertyChanged("RealSizeOnDisk"); OnPropertyChanged("RealSizeOnDiskString"); OnPropertyChanged("RealSizeOnDiskLong"); }
         }
-
         public long RealSizeOnDiskLong
         {
             get
@@ -50,7 +50,6 @@ namespace SteamMoverWPF.Entities
                 }
             }
         }
-
         public string RealSizeOnDiskString
         {
             get
@@ -70,12 +69,12 @@ namespace SteamMoverWPF.Entities
             get { return _realSizeOnDiskIsChecked; }
             set { _realSizeOnDiskIsChecked = value; OnPropertyChanged("RealSizeOnDiskIsChecked"); }
         }
-
-
+        #region OnPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
     }
 }

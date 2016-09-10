@@ -2,7 +2,6 @@
 using SteamMoverWPF.Tasks;
 using System;
 using System.ComponentModel;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using SteamMoverWPF.SteamManagement;
@@ -34,9 +33,7 @@ namespace SteamMoverWPF
             }
 
             Game game = new Game();
-            //  get property descriptions
             PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(game);
-            //  get specific descriptor
             PropertyDescriptor property = properties.Find("GameName", false);
             foreach (Library library in BindingDataContext.Instance.LibraryList)
             {
@@ -150,46 +147,17 @@ namespace SteamMoverWPF
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            RealSizeOnDiskTask.Instance.Cancel();
-            LibraryDetector.Refresh();
-            RealSizeOnDiskTask.Instance.Start();
-
-            bool isLibraryAdded = LibraryManager.AddLibrary();
-
-            if (isLibraryAdded)
-            {
-                RealSizeOnDiskTask.Instance.Cancel();
-                LibraryDetector.Refresh();
-                RealSizeOnDiskTask.Instance.Start();
-            } 
+            LibraryManager.AddLibrary();
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-
             if (ComboBoxRight.SelectedIndex == 0)
             {
                 ErrorHandler.Instance.ShowNotificationMessage("You cannot remove main library where main steam installation is located.");
                 return;
             }
-            Library libraryToRemove = (Library) ComboBoxRight.SelectedItem;
-            RealSizeOnDiskTask.Instance.Cancel();
-            LibraryDetector.Refresh();
-            Library refreshedLibraryToRemove = null;
-            foreach (Library library in BindingDataContext.Instance.LibraryList)
-            {
-                if (libraryToRemove.LibraryDirectory.Equals(library.LibraryDirectory,StringComparison.CurrentCultureIgnoreCase))
-                {
-                    refreshedLibraryToRemove = library;
-                }
-            }
-            if (refreshedLibraryToRemove == null)
-            {
-                ErrorHandler.Instance.ShowErrorMessage("Library you are trying to remove is already removed.");
-                return;
-            }
             LibraryManager.RemoveLibrary((Library)ComboBoxRight.SelectedItem);
-            RealSizeOnDiskTask.Instance.Start();
         }
 
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace SteamMoverWPF.Utility
@@ -9,7 +7,6 @@ namespace SteamMoverWPF.Utility
     {
         public static long GetWshFolderSize(string fldr)
         {
-            //Reference "Windows Script Host Object Model" on the COM tab.
             IWshRuntimeLibrary.FileSystemObject fso = new IWshRuntimeLibrary.FileSystemObject();
             long size = (long)fso.GetFolder(fldr).Size;
             Marshal.FinalReleaseComObject(fso);

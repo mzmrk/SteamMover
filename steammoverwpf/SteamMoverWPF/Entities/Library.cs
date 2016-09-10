@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
-using System.IO;
 using SteamMoverWPF.Utility;
 
 namespace SteamMoverWPF.Entities
@@ -23,7 +22,6 @@ namespace SteamMoverWPF.Entities
         {
             get { return (_libraryDirectory + "\\SteamApps"); }
         }
-
         public string LibrarySizeOnDisk
         {
             get
@@ -44,7 +42,6 @@ namespace SteamMoverWPF.Entities
 
             }
         }
-
         public string FreeSpaceOnDisk
         {
             get
@@ -53,12 +50,12 @@ namespace SteamMoverWPF.Entities
                 return ((double)freeSpaceInBytes / 1024 / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture) + " GB";
             }
         }
-
-
+        #region OnPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
     }
 }

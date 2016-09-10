@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -14,19 +13,15 @@ namespace SteamMoverWPF.Utility
             {
                 folderName += '\\';
             }
-
-            long free = 0, dummy1 = 0, dummy2 = 0;
-
+            long free = 0;
+            long dummy1 = 0;
+            long dummy2 = 0;
             if (GetDiskFreeSpaceEx(folderName, ref free, ref dummy1, ref dummy2))
             {
                 return free;
             }
-            else
-            {
-                return -1;
-            }
+            return -1;
         }
-
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage"), SuppressUnmanagedCodeSecurity]
         [DllImport("Kernel32", SetLastError = true, CharSet = CharSet.Auto)]
         [return: MarshalAs(UnmanagedType.Bool)]
