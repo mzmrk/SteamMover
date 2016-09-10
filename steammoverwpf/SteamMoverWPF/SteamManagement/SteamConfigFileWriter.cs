@@ -43,7 +43,7 @@ namespace SteamMoverWPF.SteamManagement
             string line;
             while ((line = streamReader.ReadLine()) != null)
             {
-                string propertyName = UtilityBox.GetSubstringByString('"', '"', line);
+                string propertyName = StringOperations.GetSubstringByString('"', '"', line);
                 if (propertyName != null && propertyName.Equals("SizeOnDisk"))
                 {
                     writer.AppendLine("\t\"SizeOnDisk\"\t\t\"" + realSizeOnDisk + "\"");

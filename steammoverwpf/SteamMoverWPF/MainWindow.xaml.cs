@@ -2,6 +2,7 @@
 using SteamMoverWPF.Tasks;
 using System;
 using System.ComponentModel;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using SteamMoverWPF.SteamManagement;
@@ -52,8 +53,8 @@ namespace SteamMoverWPF
         private static void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             RealSizeOnDiskTask.Instance.Cancel();
-            MessageBox.Show("Unknown error occured. Try restarting application. Details of an error will be shown after pressing OK.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            string errorMessage = $"An unhandled exception occurred: {e.Exception.Message} {e.Exception}";
+            MessageBox.Show($"Unknown error occurred. Try restarting application. Details of an error will be shown after pressing OK.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            string errorMessage = $"An unhandled exception occurred: {e.Exception}{Environment.NewLine}{e.Exception.Message}";
             MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             e.Handled = true;
             ErrorHandler.Instance.ExitApplication();

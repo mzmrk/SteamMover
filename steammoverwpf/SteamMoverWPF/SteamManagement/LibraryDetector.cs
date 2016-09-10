@@ -63,8 +63,10 @@ namespace SteamMoverWPF.SteamManagement
                 string libraryDirectory = libraryLoop.LibraryDirectory;
                 if (libraryDirectory.EndsWith("_removed"))
                 {
-                    libraryDirectory = libraryDirectory.Substring(0, libraryDirectory.Length - "_removed".Length);
+                    libraryDirectory = StringOperations.removeStringAtEnd(libraryDirectory, "_removed");
+                    libraryDirectory = StringOperations.RenamePathWhenExists(libraryDirectory);
                     FileSystem.RenameDirectory(libraryLoop.LibraryDirectory , Path.GetFileName(libraryDirectory));
+                    library.LibraryDirectory = libraryDirectory;
                     isLibraryChaged = true;
                 }
             }

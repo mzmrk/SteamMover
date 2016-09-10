@@ -106,7 +106,8 @@ namespace SteamMoverWPF.SteamManagement
             selectedPath = folderBrowserDialog.SelectedPath;
             if (selectedPath.EndsWith("_removed"))
             {
-                selectedPath = selectedPath.Substring(0, selectedPath.Length - "_removed".Length);
+                selectedPath = StringOperations.removeStringAtEnd(selectedPath, "_removed");
+                selectedPath = StringOperations.RenamePathWhenExists(selectedPath);
                 FileSystem.RenameDirectory(folderBrowserDialog.SelectedPath, Path.GetFileName(selectedPath));
             }
             Library library = new Library();
@@ -119,7 +120,9 @@ namespace SteamMoverWPF.SteamManagement
         }
         public static void RemoveLibrary(Library library)
         {
-            FileSystem.RenameDirectory(library.LibraryDirectory, Path.GetFileName(library.LibraryDirectory) + "_removed");
+            string newLibraryDirectory = library.LibraryDirectory + "_removed";
+            newLibraryDirectory = StringOperations.RenamePathWhenExists(newLibraryDirectory, "_removed");
+            FileSystem.RenameDirectory(library.LibraryDirectory, Path.GetFileName(newLibraryDirectory));
             BindingDataContext.Instance.LibraryList.Remove(library);
             SteamConfigFileWriter.WriteLibraryList();
             ErrorHandler.Instance.ShowNotificationMessage("Library will still exist on harddrive. It is only removed from the list.");

@@ -65,6 +65,7 @@
     <Compile Include="SteamManagement\SteamConfigFileReader.cs" />
     <Compile Include="SteamManagement\SteamConfigFileWriter.cs" />
     <Compile Include="Utility\GetDiskFreeSpace.cs" />
+    <Compile Include="Utility\StringOperations.cs" />
     <Compile Include="Utility\UtilityBox.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
