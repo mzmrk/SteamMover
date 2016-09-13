@@ -20,6 +20,10 @@ namespace SteamMoverWPF.Entities
             get { return _steamPath; }
             set { _steamPath = value; OnPropertyChanged("SteamPath"); }
         }
+        public string SteamPathSteamApps
+        {
+            get { return _steamPath + "\\SteamApps"; }
+        }
         private Library _selectedLibraryComboboxLeft;
         public Library SelectedLibraryComboboxLeft
         {

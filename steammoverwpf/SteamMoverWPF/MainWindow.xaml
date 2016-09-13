@@ -1,9 +1,10 @@
-﻿<Window x:Class="SteamMoverWPF.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Steam Mover" Height="500" Width="800" MinWidth="800" MinHeight="500">
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="SteamMoverWPF.MainWindow"
+        Title="Steam Mover" Height="500" Width="800" MinWidth="800" MinHeight="500" Style="{DynamicResource MainWindowStyle}">
     <Window.Resources>
-        <Style TargetType="DataGridCell" x:Key="ActiveCellStyle">
+        <Style TargetType="{x:Type DataGridCell}" x:Key="ActiveCellStyle">
             <Setter Property="Foreground" Value="Red"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RealSizeOnDiskIsChecked}" Value="{x:Null}">
@@ -17,38 +18,38 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="65"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="65"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <ComboBox Grid.Column="0" Grid.Row ="1" ItemsSource="{Binding LibraryList, Mode=OneWay}" SelectedItem="{Binding SelectedLibraryComboboxLeft}" DisplayMemberPath="SteamAppsDirectory" x:Name="ComboBoxLeft" SelectionChanged="comboBoxLeft_SelectedIndexChanged"/>
         <ComboBox Grid.Column="2" Grid.Row ="1" ItemsSource="{Binding LibraryList, Mode=OneWay}" SelectedItem="{Binding SelectedLibraryComboboxRight}" DisplayMemberPath="SteamAppsDirectory" x:Name="ComboBoxRight" SelectionChanged="comboBoxRight_SelectedIndexChanged"/>
-        <DataGrid  Grid.Column="0" Grid.Row ="3" ItemsSource="{Binding SelectedLibraryComboboxLeft.GamesList, Mode=OneWay}" x:Name="DataGridLeft" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True" GotFocus="DataGridLeft_GotFocus" VerticalScrollBarVisibility="Visible">
+        <DataGrid Grid.Column="0" Grid.Row ="3" ItemsSource="{Binding SelectedLibraryComboboxLeft.GamesList, Mode=OneWay}" x:Name="DataGridLeft" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True" GotFocus="DataGridLeft_GotFocus" VerticalScrollBarVisibility="Visible" RowHeaderWidth="0" >
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.HighlightTextColor}"/>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <!--<DataGridTextColumn Header="App ID" Binding="{Binding AppID}" Width="*" />-->
                 <DataGridTextColumn Header="Game name" Binding="{Binding GameName}" Width="*" />
-                <DataGridTextColumn Header="Size on disk" Binding="{Binding RealSizeOnDiskString}" CellStyle="{StaticResource ActiveCellStyle}" Width="80"/>
+                <DataGridTextColumn Header="App ID" Binding="{Binding AppID}" Width="Auto" />
+                <DataGridTextColumn Header="Size on disk" Binding="{Binding RealSizeOnDiskString}" CellStyle="{StaticResource ActiveCellStyle}" Width="Auto"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid Grid.Column="2" Grid.Row ="3" ItemsSource="{Binding SelectedLibraryComboboxRight.GamesList, Mode=OneWay}" x:Name="DataGridRight" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True" GotFocus="DataGridRight_GotFocus" VerticalScrollBarVisibility="Visible">
+        <DataGrid Grid.Column="2" Grid.Row ="3" ItemsSource="{Binding SelectedLibraryComboboxRight.GamesList, Mode=OneWay}" x:Name="DataGridRight" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True" GotFocus="DataGridRight_GotFocus" VerticalScrollBarVisibility="Visible" RowHeaderWidth="0">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.HighlightTextColor}"/>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <!--<DataGridTextColumn Header="App ID" Binding="{Binding AppID}" Width="*" />-->
                 <DataGridTextColumn Header="Game name" Binding="{Binding GameName}" Width="*" />
-                <DataGridTextColumn Header="Size on disk" Binding="{Binding RealSizeOnDiskString}" CellStyle="{StaticResource ActiveCellStyle}" Width="80" />
+                <DataGridTextColumn Header="App ID" Binding="{Binding AppID}" Width="Auto" />
+                <DataGridTextColumn Header="Size on disk" Binding="{Binding RealSizeOnDiskString}" CellStyle="{StaticResource ActiveCellStyle}" Width="Auto" />
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Grid.Column="1" Grid.Row ="3" VerticalAlignment="Center">
@@ -60,10 +61,9 @@
 
         <StackPanel Grid.Column="0" Grid.Row ="0" Orientation="Horizontal" >
             <Label Content="Steam folder path:" FontWeight="Bold" />
-            <Label Content="{Binding SteamPath, Mode=OneWay}" />
-            <Label Content="\SteamApps" />
+            <Label Content="{Binding SteamPathSteamApps, Mode=OneWay}" />
         </StackPanel>
-        
+
 
         <Grid Grid.Column="0" Grid.Row ="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
