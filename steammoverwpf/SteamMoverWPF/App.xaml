@@ -12,6 +12,8 @@
                 <ResourceDictionary Source="Styles/ScrollBar.xaml"/>
                 <ResourceDictionary Source="Styles/Label.xaml"/>
                 <ResourceDictionary Source="Styles/ComboBox.xaml"/>
+                <ResourceDictionary Source="Styles/Color.xaml"/>
+                <!--<ResourceDictionary Source="Styles/ResourceTest.xaml"/>-->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
 

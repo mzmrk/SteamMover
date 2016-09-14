@@ -15,7 +15,7 @@
         <GradientStop Color="#FF40C33A"/>
     </LinearGradientBrush>
     <SolidColorBrush x:Key="Button.Static.Border" Color="#FFA4A4A4"/>
-    <SolidColorBrush x:Key="Button.Static.Foreground" Color="White"/>
+    <SolidColorBrush x:Key="Button.Static.Foreground" Color="{DynamicResource AppWide.Foreground}"/>
     <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
     <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
     <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
