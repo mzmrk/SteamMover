@@ -17,9 +17,9 @@
 
 
     <!--DataGridColumnHeader-->
-    <SolidColorBrush x:Key="DataGridColumnHeader.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="DataGridColumnHeader.Foreground" Color="{DynamicResource AppWide.Foreground}"/>
-    <SolidColorBrush x:Key="DataGridColumnHeader.BorderBrush" Color="{DynamicResource AppWide.Border}"/>
+    <SolidColorBrush x:Key="DataGridColumnHeader.Background" Color="{DynamicResource AppWide.ElementsBackground}"/>
+    <SolidColorBrush x:Key="DataGridColumnHeader.Foreground" Color="{DynamicResource AppWide.ElementsForeground}"/>
+    <SolidColorBrush x:Key="DataGridColumnHeader.BorderBrush" Color="{DynamicResource AppWide.ElementsForeground}"/>
     <SolidColorBrush x:Key="DataGridColumnHeader.Sorted.BorderBrush" Color="{DynamicResource AppWide.Border}"/>
     <SolidColorBrush x:Key="DataGridColumnHeader.Sorted.Background" Color="{DynamicResource AppWide.Background}"/>
     <SolidColorBrush x:Key="DataGridColumnHeader.MouseOver.BorderBrush" Color="{DynamicResource AppWide.Border}"/>
@@ -76,6 +76,7 @@
     <!--DataGridColumnHeader_StackOverflowStyle_GripperBorder-->
     <Style x:Key="DataGridColumnHeader_StackOverflowStyle_GripperBorder"  TargetType="{x:Type DataGridColumnHeader}">
         <Setter Property="Foreground" Value="{StaticResource DataGridColumnHeader.Foreground}" />
+        <Setter Property="Background" Value="Red" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="DataGridColumnHeader">
@@ -89,7 +90,7 @@
                         <Border x:Name="buttonBorderOuter"
                         BorderBrush="{DynamicResource DataGridColumnHeader.BorderBrush}"
                         BorderThickness="1"
-                        Background="#00ECECEC"
+                        Background="{StaticResource DataGridColumnHeader.Background}"
                         Padding="2">
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -178,7 +179,7 @@
     <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource DataGridColumnHeader_StackOverflowStyle_GripperBorder}"/>
 
     <!--DataGrid-->
-    <SolidColorBrush x:Key="DataGrid.Background" Color="{DynamicResource AppWide.Background}"/>
+    <SolidColorBrush x:Key="DataGrid.Background" Color="Transparent"/>
     <SolidColorBrush x:Key="DataGrid.BorderBrush" Color="{DynamicResource AppWide.Border}"/>
     <Style TargetType="{x:Type DataGrid}">
         <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource DataGrid.BorderBrush}"/>
@@ -247,6 +248,7 @@
     <Style TargetType="{x:Type DataGridRow}">
         <Setter Property="Background" Value="{StaticResource DataGridRow.Background}"/>
         <Setter Property="Foreground" Value="{StaticResource DataGridRow.Foreground}"/>
+        <Setter Property="FontSize" Value="12.5"/>
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
         <Setter Property="ValidationErrorTemplate">
@@ -287,36 +289,45 @@
     <!--DataGridCell RealSizeOnDiskCell-->
     <SolidColorBrush x:Key="RealSizeOnDiskCell.Default.Foreground" Color="{DynamicResource AppWide.Foreground}"/>
     <SolidColorBrush x:Key="RealSizeOnDiskCell.Checked.Foreground" Color="{DynamicResource AppWide.Foreground}"/>
-    <SolidColorBrush x:Key="RealSizeOnDiskCell.NotChecked.Foreground" Color="Red"/>
+    <SolidColorBrush x:Key="RealSizeOnDiskCell.NotChecked.Foreground" Color="#FF537650"/>
     <SolidColorBrush x:Key="RealSizeOnDiskCell.InactiveSelectionHighligh" Color="{x:Static SystemColors.HighlightColor}"/>
     <!--<SolidColorBrush x:Key="RealSizeOnDiskCell.InactiveSelectionHighlightText" Color="{x:Static SystemColors.HighlightTextColor}"/>-->
     <Style TargetType="{x:Type DataGridCell}" x:Key="RealSizeOnDiskCellStyle">
         <Setter Property="Foreground" Value="{DynamicResource DataGridCell.Default.Foreground}"/>
         <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{DynamicResource DataGridCell.SelectionBackground}"/>
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource DataGridCell.SelectionBackground}"/>
+            </Trigger>
+            <!--<Trigger Property="IsKeyboardFocusWithin" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static DataGrid.FocusBorderBrushKey}}"/>
+            </Trigger>-->
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsSelected" Value="true"/>
+                    <Condition Property="Selector.IsSelectionActive" Value="false"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{DynamicResource DataGridCell.SelectionBackground}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource DataGridCell.SelectionBackground}"/>
+                <Setter Property="Foreground" Value="{DynamicResource DataGridCell.InactiveSelectionHighlightText}"/>
+            </MultiTrigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+            </Trigger>
             <DataTrigger Binding="{Binding RealSizeOnDiskIsChecked}" Value="{x:Null}">
                 <Setter Property="Foreground" Value="{DynamicResource RealSizeOnDiskCell.NotChecked.Foreground}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding RealSizeOnDiskIsChecked}" Value="False">
                 <Setter Property="Foreground" Value="{DynamicResource RealSizeOnDiskCell.NotChecked.Foreground}"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding RealSizeOnDiskIsChecked}" Value="True">
-                <Setter Property="Foreground" Value="{DynamicResource RealSizeOnDiskCell.Checked.Foreground}"/>
-            </DataTrigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsSelected" Value="true"/>
-                    <Condition Property="Selector.IsSelectionActive" Value="false"/>
-                </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{DynamicResource RealSizeOnDiskCell.InactiveSelectionHighligh}"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource RealSizeOnDiskCell.InactiveSelectionHighligh}"/>
-                <!--<Setter Property="Foreground" Value="{DynamicResource RealSizeOnDiskCell.InactiveSelectionHighlightText}"/>-->
-            </MultiTrigger>
         </Style.Triggers>
     </Style>
 
     <!--DataGridCell-->
     <SolidColorBrush x:Key="DataGridCell.InactiveSelectionHighligh" Color="{x:Static SystemColors.HighlightColor}"/>
     <SolidColorBrush x:Key="DataGridCell.InactiveSelectionHighlightText" Color="{x:Static SystemColors.HighlightTextColor}"/>
+    <SolidColorBrush x:Key="DataGridCell.SelectionBackground" Color="{DynamicResource AppWide.ElementsBackground}"/>
     <Style TargetType="{x:Type DataGridCell}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
@@ -332,9 +343,9 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                <Setter Property="Background" Value="{DynamicResource DataGridCell.SelectionBackground}"/>
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource DataGridCell.SelectionBackground}"/>
             </Trigger>
             <!--<Trigger Property="IsKeyboardFocusWithin" Value="True">
                 <Setter Property="BorderBrush" Value="{DynamicResource {x:Static DataGrid.FocusBorderBrushKey}}"/>
@@ -344,8 +355,8 @@
                     <Condition Property="IsSelected" Value="true"/>
                     <Condition Property="Selector.IsSelectionActive" Value="false"/>
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{DynamicResource DataGridCell.InactiveSelectionHighligh}"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource DataGridCell.InactiveSelectionHighligh}"/>
+                <Setter Property="Background" Value="{DynamicResource DataGridCell.SelectionBackground}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource DataGridCell.SelectionBackground}"/>
                 <Setter Property="Foreground" Value="{DynamicResource DataGridCell.InactiveSelectionHighlightText}"/>
             </MultiTrigger>
             <Trigger Property="IsEnabled" Value="false">

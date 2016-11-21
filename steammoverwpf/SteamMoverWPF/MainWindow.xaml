@@ -17,14 +17,14 @@
         </Grid.ColumnDefinitions>
         <ComboBox Grid.Column="0" Grid.Row ="1" ItemsSource="{Binding LibraryList, Mode=OneWay}" SelectedItem="{Binding SelectedLibraryComboboxLeft}" DisplayMemberPath="SteamAppsDirectory" x:Name="ComboBoxLeft" SelectionChanged="comboBoxLeft_SelectedIndexChanged"/>
         <ComboBox Grid.Column="2" Grid.Row ="1" ItemsSource="{Binding LibraryList, Mode=OneWay}" SelectedItem="{Binding SelectedLibraryComboboxRight}" DisplayMemberPath="SteamAppsDirectory" x:Name="ComboBoxRight" SelectionChanged="comboBoxRight_SelectedIndexChanged"/>
-        <DataGrid Grid.Column="0" Grid.Row ="3" ItemsSource="{Binding SelectedLibraryComboboxLeft.GamesList, Mode=OneWay}" x:Name="DataGridLeft" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True" GotFocus="DataGridLeft_GotFocus" VerticalScrollBarVisibility="Visible" RowHeaderWidth="0" >
+        <DataGrid Grid.Column="0" Grid.Row ="3" ItemsSource="{Binding SelectedLibraryComboboxLeft.GamesList, Mode=OneWay}" x:Name="DataGridLeft" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True" GotFocus="DataGridLeft_GotFocus" VerticalScrollBarVisibility="Visible" RowHeaderWidth="0" FontWeight="Bold" >
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Game name" Binding="{Binding GameName}" Width="*" />
                 <DataGridTextColumn Header="App ID" Binding="{Binding AppID}" Width="Auto" />
                 <DataGridTextColumn Header="Size on disk" Binding="{Binding RealSizeOnDiskString}" CellStyle="{StaticResource RealSizeOnDiskCellStyle}" Width="Auto"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid Grid.Column="2" Grid.Row ="3" ItemsSource="{Binding SelectedLibraryComboboxRight.GamesList, Mode=OneWay}" x:Name="DataGridRight" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True" GotFocus="DataGridRight_GotFocus" VerticalScrollBarVisibility="Visible" RowHeaderWidth="0">
+        <DataGrid Grid.Column="2" Grid.Row ="3" ItemsSource="{Binding SelectedLibraryComboboxRight.GamesList, Mode=OneWay}" x:Name="DataGridRight" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" CanUserResizeRows="False" IsReadOnly="True" GotFocus="DataGridRight_GotFocus" VerticalScrollBarVisibility="Visible" RowHeaderWidth="0" FontWeight="Bold">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Game name" Binding="{Binding GameName}" Width="*" />
                 <DataGridTextColumn Header="App ID" Binding="{Binding AppID}" Width="Auto" />
@@ -32,26 +32,59 @@
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Grid.Column="1" Grid.Row ="3" VerticalAlignment="Center">
-            <Button x:Name="ButtonRight" Content="-&gt;" Click="buttonRight_Click_1" Margin="0,0,0,50" />
-            <Button x:Name="ButtonLeft" Content="&lt;-" Click="buttonLeft_Click_1"/>
+            <Button x:Name="ButtonLeftRight" Content="&lt;-&gt;" Click="buttonLeftRight_Click_1"/>
         </StackPanel>
 
 
 
+
         <StackPanel Grid.Column="0" Grid.Row ="0" Orientation="Horizontal" >
-            <Label Content="Steam folder path:" FontWeight="Bold" />
-            <Label Content="{Binding SteamPathSteamApps, Mode=OneWay}" />
+            <Label Content="Steam folder path:" FontWeight="Bold" Foreground="White" >
+                <Label.Effect>
+                    <DropShadowEffect/>
+                </Label.Effect>
+            </Label>
+            <Label Content="{Binding SteamPathSteamApps, Mode=OneWay}" FontWeight="Bold" Background="#00000000" >
+                <Label.Foreground>
+                    <SolidColorBrush Color="#FFFFD100"/>
+                </Label.Foreground>
+                <Label.Effect>
+                    <DropShadowEffect/>
+                </Label.Effect>
+            </Label>
         </StackPanel>
 
 
         <Grid Grid.Column="0" Grid.Row ="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                <Label Content="Library size:" FontWeight="Bold"/>
-                <Label x:Name="LabelLibrarySizeLeft" Content="{Binding SelectedLibraryComboboxLeft.LibrarySizeOnDisk, Mode=OneWay}"/>
+                <Label Content="Library size:" FontWeight="Bold" Foreground="White">
+                    <Label.Effect>
+                        <DropShadowEffect/>
+                    </Label.Effect>
+                </Label>
+                <Label x:Name="LabelLibrarySizeLeft" Content="{Binding SelectedLibraryComboboxLeft.LibrarySizeOnDisk, Mode=OneWay}" FontWeight="Bold" Background="#00000000">
+                    <Label.Foreground>
+                        <SolidColorBrush Color="#FFFFD100"/>
+                    </Label.Foreground>
+                    <Label.Effect>
+                        <DropShadowEffect/>
+                    </Label.Effect>
+                </Label>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Label Content="Space left:" FontWeight="Bold"/>
-                <Label x:Name="LabelFreeSpaceOnDiskLeft" Content="{Binding SelectedLibraryComboboxLeft.FreeSpaceOnDisk, Mode=OneWay}"/>
+                <Label Content="Space left:" FontWeight="Bold" Foreground="White">
+                    <Label.Effect>
+                        <DropShadowEffect/>
+                    </Label.Effect>
+                </Label>
+                <Label x:Name="LabelFreeSpaceOnDiskLeft" Content="{Binding SelectedLibraryComboboxLeft.FreeSpaceOnDisk, Mode=OneWay}" FontWeight="Bold" Background="#00000000">
+                    <Label.Foreground>
+                        <SolidColorBrush Color="#FFFFD100"/>
+                    </Label.Foreground>
+                    <Label.Effect>
+                        <DropShadowEffect/>
+                    </Label.Effect>
+                </Label>
             </StackPanel>
         </Grid>
 
@@ -59,15 +92,37 @@
 
         <Grid Grid.Column="2" Grid.Row ="2" >
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                <Label Content="Library size:" FontWeight="Bold"/>
-                <Label x:Name="LabelLibrarySizeRight" Content="{Binding SelectedLibraryComboboxRight.LibrarySizeOnDisk, Mode=OneWay}"/>
+                <Label Content="Library size:" FontWeight="Bold" Foreground="White">
+                    <Label.Effect>
+                        <DropShadowEffect/>
+                    </Label.Effect>
+                </Label>
+                <Label x:Name="LabelLibrarySizeRight" Content="{Binding SelectedLibraryComboboxRight.LibrarySizeOnDisk, Mode=OneWay}" FontWeight="Bold" Background="#00000000">
+                    <Label.Foreground>
+                        <SolidColorBrush Color="#FFFFD100"/>
+                    </Label.Foreground>
+                    <Label.Effect>
+                        <DropShadowEffect/>
+                    </Label.Effect>
+                </Label>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button x:Name="Button1" Content="Remove" Click="button1_Click"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Label Content="Space left:" FontWeight="Bold"/>
-                <Label x:Name="LabelFreeSpaceOnDiskRight" Content="{Binding SelectedLibraryComboboxRight.FreeSpaceOnDisk, Mode=OneWay}"/>
+                <Label Content="Space left:" FontWeight="Bold" Foreground="White">
+                    <Label.Effect>
+                        <DropShadowEffect/>
+                    </Label.Effect>
+                </Label>
+                <Label x:Name="LabelFreeSpaceOnDiskRight" Content="{Binding SelectedLibraryComboboxRight.FreeSpaceOnDisk, Mode=OneWay}" FontWeight="Bold" Background="#00000000">
+                    <Label.Foreground>
+                        <SolidColorBrush Color="#FFFFD100"/>
+                    </Label.Foreground>
+                    <Label.Effect>
+                        <DropShadowEffect/>
+                    </Label.Effect>
+                </Label>
             </StackPanel>
         </Grid>
     </Grid>

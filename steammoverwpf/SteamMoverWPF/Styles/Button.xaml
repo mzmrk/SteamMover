@@ -10,15 +10,12 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <LinearGradientBrush x:Key="Button.Static.Background" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="Black" Offset="1"/>
-        <GradientStop Color="#FF40C33A"/>
-    </LinearGradientBrush>
+    <SolidColorBrush x:Key="Button.Static.Background" Color="{DynamicResource AppWide.ElementsBackground}"/>
     <SolidColorBrush x:Key="Button.Static.Border" Color="#FFA4A4A4"/>
-    <SolidColorBrush x:Key="Button.Static.Foreground" Color="{DynamicResource AppWide.Foreground}"/>
-    <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+    <SolidColorBrush x:Key="Button.Static.Foreground" Color="#FFDADADA"/>
+    <SolidColorBrush x:Key="Button.MouseOver.Background" Color="{DynamicResource AppWide.MouseOver.ElementsBackground}"/>
     <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
-    <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+    <SolidColorBrush x:Key="Button.Pressed.Background" Color="{DynamicResource AppWide.Pressed.ElementsBackground}"/>
     <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
     <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
     <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>

@@ -108,10 +108,9 @@ namespace SteamMoverWPF
                 }
             }
         }
-
-        private void buttonRight_Click_1(object sender, RoutedEventArgs e)
+        private void buttonLeftRight_Click_1(object sender, RoutedEventArgs e)
         {
-            if (DataGridLeft.SelectedIndex == -1)
+            if (DataGridLeft.SelectedIndex == -1 && DataGridRight.SelectedIndex == -1)
             {
                 ErrorHandler.Instance.ShowNotificationMessage("Please select game before moving.");
                 return;
@@ -121,28 +120,20 @@ namespace SteamMoverWPF
                 ErrorHandler.Instance.ShowNotificationMessage("You cannot move games between same libraries.");
                 return;
             }
-            Library source = (Library)ComboBoxLeft.SelectedItem;
-            Library destination = (Library)ComboBoxRight.SelectedItem;
-            Game selectedGame = (Game)DataGridLeft.SelectedItem;
-            LibraryManager.MoveSteamGame(source, destination, selectedGame);
-        }
-
-        private void buttonLeft_Click_1(object sender, RoutedEventArgs e)
-        {
-            if (DataGridRight.SelectedIndex == -1)
+            if (DataGridRight.SelectedIndex > -1)
             {
-                ErrorHandler.Instance.ShowNotificationMessage("Please select game before moving.");
-                return;
+                Library source = (Library)ComboBoxRight.SelectedItem;
+                Library destination = (Library)ComboBoxLeft.SelectedItem;
+                Game selectedGame = (Game)DataGridRight.SelectedItem;
+                LibraryManager.MoveSteamGame(source, destination, selectedGame);
             }
-            if (ComboBoxLeft.SelectedIndex == ComboBoxRight.SelectedIndex)
+            if (DataGridLeft.SelectedIndex > -1)
             {
-                ErrorHandler.Instance.ShowNotificationMessage("You cannot move games between same libraries.");
-                return;
+                Library source = (Library)ComboBoxLeft.SelectedItem;
+                Library destination = (Library)ComboBoxRight.SelectedItem;
+                Game selectedGame = (Game)DataGridLeft.SelectedItem;
+                LibraryManager.MoveSteamGame(source, destination, selectedGame);
             }
-            Library source = (Library)ComboBoxRight.SelectedItem;
-            Library destination = (Library)ComboBoxLeft.SelectedItem;
-            Game selectedGame = (Game)DataGridRight.SelectedItem;
-            LibraryManager.MoveSteamGame(source, destination, selectedGame);
         }
 
         private void button_Click(object sender, RoutedEventArgs e)

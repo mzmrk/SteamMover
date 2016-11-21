@@ -2,25 +2,25 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:SteamMoverWPF" xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
 
-    <SolidColorBrush x:Key="ComboBox.Static.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="ComboBox.Static.Foreground" Color="{DynamicResource AppWide.Foreground}"/>
-    <SolidColorBrush x:Key="ComboBox.Static.Border" Color="{DynamicResource AppWide.Border}"/>
+    <SolidColorBrush x:Key="ComboBox.Static.Background" Color="{DynamicResource AppWide.ElementsBackground}"/>
+    <SolidColorBrush x:Key="ComboBox.Static.Foreground" Color="{DynamicResource AppWide.ElementsForeground}"/>
+    <SolidColorBrush x:Key="ComboBox.Static.Border" Color="{DynamicResource AppWide.ElementsForeground}"/>
     <SolidColorBrush x:Key="ComboBox.Static.Editable.Background" Color="#FFFFFFFF"/>
     <SolidColorBrush x:Key="ComboBox.Static.Editable.Border" Color="#FFABADB3"/>
     <SolidColorBrush x:Key="ComboBox.Static.Editable.Button.Background" Color="Transparent"/>
     <SolidColorBrush x:Key="ComboBox.Static.Editable.Button.Border" Color="Transparent"/>
     <SolidColorBrush x:Key="ComboBox.MouseOver.Glyph" Color="{DynamicResource AppWide.Border}"/>
-    <SolidColorBrush x:Key="ComboBox.MouseOver.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="ComboBox.MouseOver.Border" Color="{DynamicResource AppWide.Border}"/>
+    <SolidColorBrush x:Key="ComboBox.MouseOver.Background" Color="{DynamicResource AppWide.MouseOver.ElementsBackground}"/>
+    <SolidColorBrush x:Key="ComboBox.MouseOver.Border" Color="{DynamicResource AppWide.ElementsForeground}"/>
     <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Border" Color="{DynamicResource AppWide.Border}"/>
+    <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Border" Color="{DynamicResource AppWide.ElementsForeground}"/>
     <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Button.Background" Color="{DynamicResource AppWide.Background}"/>
     <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Button.Border" Color="{DynamicResource AppWide.Border}"/>
     <SolidColorBrush x:Key="ComboBox.Pressed.Glyph" Color="{DynamicResource AppWide.Border}"/>
-    <SolidColorBrush x:Key="ComboBox.Pressed.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="{DynamicResource AppWide.Border}"/>
+    <SolidColorBrush x:Key="ComboBox.Pressed.Background" Color="{DynamicResource AppWide.Pressed.ElementsBackground}"/>
+    <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="{DynamicResource AppWide.ElementsForeground}"/>
     <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Border" Color="{DynamicResource AppWide.Border}"/>
+    <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Border" Color="{DynamicResource AppWide.ElementsForeground}"/>
     <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Button.Background" Color="{DynamicResource AppWide.Background}"/>
     <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Button.Border" Color="{DynamicResource AppWide.Border}"/>
     <SolidColorBrush x:Key="ComboBox.Disabled.Glyph" Color="#FFBFBFBF"/>
@@ -169,7 +169,7 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    <SolidColorBrush x:Key="TextBox.Static.Background" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="TextBox.Static.Background" Color="#00000000"/>
     <Style x:Key="ComboBoxEditableTextBox" TargetType="{x:Type TextBox}">
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="AllowDrop" Value="true"/>
@@ -259,20 +259,20 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    <SolidColorBrush x:Key="ComboBoxItem.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.Border" Color="{DynamicResource AppWide.Border}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHover.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHover.Border" Color="{DynamicResource AppWide.Border}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelected.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelected.Border" Color="{DynamicResource AppWide.Border}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedHover.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedHover.Border" Color="{DynamicResource AppWide.Border}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedNoFocus.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedNoFocus.Border" Color="{DynamicResource AppWide.Border}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewFocus.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewFocus.Border" Color="{DynamicResource AppWide.Border}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHoverFocus.Background" Color="{DynamicResource AppWide.Background}"/>
-    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHoverFocus.Border" Color="{DynamicResource AppWide.Border}"/>
+    <SolidColorBrush x:Key="ComboBoxItem.Background" Color="#FF0D6A11"/>
+    <SolidColorBrush x:Key="ComboBoxItem.Border" Color="{DynamicResource AppWide.ElementsForeground}"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHover.Background" Color="#FF0D6A11"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHover.Border" Color="{DynamicResource AppWide.ElementsForeground}"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelected.Background" Color="{DynamicResource AppWide.Pressed.ElementsBackground}"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelected.Border" Color="{DynamicResource AppWide.ElementsForeground}"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedHover.Background" Color="{DynamicResource AppWide.Pressed.ElementsBackground}"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedHover.Border" Color="{DynamicResource AppWide.ElementsForeground}"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedNoFocus.Background" Color="{DynamicResource AppWide.Pressed.ElementsBackground}"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedNoFocus.Border" Color="{DynamicResource AppWide.ElementsForeground}"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewFocus.Background" Color="#FF1A4D11"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewFocus.Border" Color="{DynamicResource AppWide.ElementsForeground}"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHoverFocus.Background" Color="#FF1A4D11"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHoverFocus.Border" Color="{DynamicResource AppWide.ElementsForeground}"/>
     <Style TargetType="{x:Type ComboBoxItem}">
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="Padding" Value="4,1"/>
