@@ -90,19 +90,19 @@ namespace SteamMoverWPF.SteamManagement
                 Game game = new Game();
                 foreach (SteamConfigFileProperty steamConfigFileProperty in steamConfigFile.SteamConfigFilePropertyList)
                 {
-                    if (steamConfigFileProperty.Name.Equals("appID"))
+                    if (steamConfigFileProperty.Name.Equals("appID", StringComparison.CurrentCultureIgnoreCase))
                     {
                         game.AppID = Convert.ToInt32(steamConfigFileProperty.Value);
                     }
-                    else if (steamConfigFileProperty.Name.Equals("name"))
+                    else if (steamConfigFileProperty.Name.Equals("name", StringComparison.CurrentCultureIgnoreCase))
                     {
                         game.GameName = steamConfigFileProperty.Value;
                     }
-                    else if (steamConfigFileProperty.Name.Equals("installdir"))
+                    else if (steamConfigFileProperty.Name.Equals("installdir", StringComparison.CurrentCultureIgnoreCase))
                     {
                         game.GameFolder = steamConfigFileProperty.Value;
                     }
-                    else if (steamConfigFileProperty.Name.Equals("SizeOnDisk"))
+                    else if (steamConfigFileProperty.Name.Equals("SizeOnDisk", StringComparison.CurrentCultureIgnoreCase))
                     {
                         game.SizeOnDisk = Convert.ToInt64(steamConfigFileProperty.Value);
                     }
