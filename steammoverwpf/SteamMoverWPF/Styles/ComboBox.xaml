@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:SteamMoverWPF" xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
+                    xmlns:local="clr-namespace:SteamMoverWPF" xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero">
 
     <SolidColorBrush x:Key="ComboBox.Static.Background" Color="{DynamicResource AppWide.ElementsBackground}"/>
     <SolidColorBrush x:Key="ComboBox.Static.Foreground" Color="{DynamicResource AppWide.ElementsForeground}"/>

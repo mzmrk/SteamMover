@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamMoverWPF", "SteamMoverWPF\SteamMoverWPF.csproj", "{470CB80C-9EC4-4403-9F47-20B4B13A7244}"
 EndProject
@@ -20,9 +20,11 @@ Global
 		{AF854C0E-D5D7-4B54-913E-1DCD005979A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AF854C0E-D5D7-4B54-913E-1DCD005979A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF854C0E-D5D7-4B54-913E-1DCD005979A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AF854C0E-D5D7-4B54-913E-1DCD005979A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {261CFCD2-DB04-4238-99AE-675D3BB13D89}
 	EndGlobalSection
 EndGlobal
